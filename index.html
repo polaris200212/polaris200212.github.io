@@ -515,8 +515,8 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 			<!-- 密码验证模块 -->
 			<script>
 				// 安全配置 (使用前必须修改以下三项)
-				const salt = "pku_nsd_2024@dx!";      // 加密盐值(需自行修改)
-				const storedHash = "U2FsdGVkX1/IfZM5Vm36RPxz1jDlhULnu/DJw77s9hc="; // 加密后的密码(123456)
+				<!-- const salt = "pku_nsd_2024@dx!";      // 加密盐值(需自行修改) -->
+				const storedHash = "zdy20021223"; // 加密后的密码
 				const maxAttempts = 10;                // 最大尝试次数
 
 				let attempts = 0;
@@ -528,7 +528,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 					
 					const inputHash = CryptoJS.AES.encrypt(
 						document.getElementById("passwordInput").value, 
-						salt
+						<!-- salt -->
 					).toString();
 
 					if(inputHash === storedHash) {
