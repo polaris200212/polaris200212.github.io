@@ -3,6 +3,7 @@
 <head>
     <title>Polaris Diary</title>
     <style>
+        /* 保持原有样式不变 */
         body { max-width: 800px; margin: 0 auto; padding: 20px; font-family: -apple-system, sans-serif; }
         .editor { border: 1px solid #e1e4e8; padding: 20px; border-radius: 6px; margin-bottom: 30px; }
         textarea { width: 100%; height: 100px; padding: 10px; border: 1px solid #d1d5da; margin-bottom: 10px; }
@@ -25,9 +26,25 @@
     <script>
         // 配置参数
         const REPO = 'polaris200212/polaris200212.github.io';
-        // 请替换为你的新Token（重要！）
-        const TOKEN = 'ghp_你的新Token这里'; 
+        const TOKEN = 'ghp_你的Token'; // 替换为你的Token
         const DATA_FILE = '_data/diary.json';
+
+        // 解决中文Base64编码问题
+        function encodeUTF8(str) {
+            return encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+                return String.fromCharCode('0x' + p1);
+            });
+        }
+
+        function safeBtoa(str) {
+            return btoa(encodeUTF8(str));
+        }
+
+        function safeAtob(str) {
+            return decodeURIComponent(Array.from(atob(str)).map(c => {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+        }
 
         // 显示状态
         function showStatus(message, isError = false) {
@@ -50,9 +67,8 @@
             try {
                 // 获取IP信息
                 const ip = await fetch('https://api.ipify.org?format=json')
-                    .then(r => r.ok ? r.json() : Promise.reject('IP获取失败'))
-                    .then(d => d.ip)
-                    .catch(() => '未知IP');
+                    .then(r => r.ok ? r.json() : { ip: '未知IP' })
+                    .then(d => d.ip);
 
                 // 创建日记对象
                 const newEntry = {
@@ -63,15 +79,17 @@
                     country: '自动获取中...'
                 };
 
-                // 尝试获取位置信息（非阻塞）
+                // 非阻塞获取位置信息
                 fetch(`https://ipapi.co/${ip}/json/`)
                     .then(r => r.ok ? r.json() : {})
                     .then(location => {
                         newEntry.city = location.city || "未知地区";
                         newEntry.country = location.country_name || "未知国家";
+                        // 自动更新显示
+                        loadDiaries();
                     });
 
-                // 获取现有数据或创建新文件
+                // 获取或创建数据文件
                 let existingData = [];
                 let sha = null;
 
@@ -82,14 +100,16 @@
                     
                     if (fileRes.ok) {
                         const fileData = await fileRes.json();
-                        existingData = JSON.parse(atob(fileData.content));
+                        existingData = JSON.parse(safeAtob(fileData.content));
                         sha = fileData.sha;
                     }
-                } catch (e) {} // 忽略文件不存在的错误
+                } catch (e) {
+                    console.log('文件不存在，将创建新文件');
+                }
 
                 existingData.push(newEntry);
 
-                // 更新文件
+                // 更新文件（使用安全编码）
                 const updateRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_FILE}`, {
                     method: 'PUT',
                     headers: { 
@@ -98,7 +118,7 @@
                     },
                     body: JSON.stringify({
                         message: `添加日记: ${new Date().toLocaleString()}`,
-                        content: btoa(JSON.stringify(existingData, null, 2)),
+                        content: safeBtoa(JSON.stringify(existingData, null, 2)),
                         sha: sha
                     })
                 });
@@ -109,8 +129,8 @@
                 }
 
                 document.getElementById('content').value = '';
-                await loadDiaries();
                 showStatus('提交成功！', false);
+                loadDiaries();
 
             } catch (error) {
                 console.error('提交失败:', error);
@@ -136,7 +156,8 @@
                     throw new Error('加载失败');
                 }
 
-                const data = await res.json();
+                const textData = await res.text();
+                const data = textData ? JSON.parse(textData) : [];
                 renderDiaries(data);
             } catch (error) {
                 console.error('加载失败:', error);
@@ -165,9 +186,9 @@
             `).join('');
         }
 
-        // 初始化
+        // 初始化加载
         loadDiaries();
-        setInterval(loadDiaries, 60000);
+        setInterval(loadDiaries, 60000); // 每分钟自动刷新
     </script>
 </body>
 </html>
