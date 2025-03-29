@@ -527,8 +527,8 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 					}
 					
 					const inputHash = CryptoJS.AES.encrypt(
-						document.getElementById("passwordInput").value, 
-						<!-- salt -->
+						document.getElementById("passwordInput").value 
+						<!-- ,salt -->
 					).toString();
 
 					if(inputHash === storedHash) {
