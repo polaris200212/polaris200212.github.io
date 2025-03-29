@@ -535,7 +535,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 						document.getElementById("authOverlay").style.display = "none";
 						document.getElementById("main").style.display = "block";
 						document.getElementById("footer").style.display = "block";
-						localStorage.setItem("authToken", inputHash);
+						localStorage.setItem("authToken", password);
 					} else {
 						attempts++;
 						document.getElementById("errorMsg").style.display = "block";
@@ -549,7 +549,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 				// 初始化验证
 				    document.addEventListener("DOMContentLoaded", () => {
 					const authToken = localStorage.getItem("authToken");
-					if (authToken === storedHash) {
+					if (authToken === password) {
 					    document.getElementById("authOverlay").style.display = "none";
 					    document.getElementById("main").style.display = "block";
 					    document.getElementById("footer").style.display = "block";
