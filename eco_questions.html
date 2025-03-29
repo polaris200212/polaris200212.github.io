@@ -224,14 +224,18 @@
     </footer>
 
     <script>
-        // 获取所有页面内容
-        const pages = document.querySelectorAll('.page');
+        // 获取所有内容条目
+        const items = document.querySelectorAll('#content > *'); // 包括 p, h2, blockquote 等
+        const itemsPerPage = 10; // 每页显示的条目数
         let currentPage = 0;
 
-        // 显示指定页面
-        function showPage(index) {
-            pages.forEach((page, i) => {
-                page.style.display = i === index ? 'block' : 'none';
+        // 显示指定页面的内容
+        function showPage(pageIndex) {
+            const start = pageIndex * itemsPerPage;
+            const end = start + itemsPerPage;
+
+            items.forEach((item, index) => {
+                item.style.display = (index >= start && index < end) ? 'block' : 'none';
             });
         }
 
@@ -252,11 +256,12 @@
 
         // 下一页按钮点击事件
         document.getElementById('nextPage').addEventListener('click', () => {
-            if (currentPage < pages.length - 1) {
+            const totalPages = Math.ceil(items.length / itemsPerPage);
+            if (currentPage < totalPages - 1) {
                 currentPage++;
                 showPage(currentPage);
                 document.getElementById('prevPage').disabled = false;
-                if (currentPage === pages.length - 1) {
+                if (currentPage === totalPages - 1) {
                     document.getElementById('nextPage').disabled = true;
                 }
             }
