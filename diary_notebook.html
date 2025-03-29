@@ -3,7 +3,6 @@
 <head>
     <title>Polaris Diary</title>
     <style>
-        /* 极简风格样式 */
         body { max-width: 800px; margin: 0 auto; padding: 20px; font-family: -apple-system, sans-serif; }
         .editor { border: 1px solid #e1e4e8; padding: 20px; border-radius: 6px; margin-bottom: 30px; }
         textarea { width: 100%; height: 100px; padding: 10px; border: 1px solid #d1d5da; margin-bottom: 10px; }
@@ -21,147 +20,136 @@
         <textarea id="content" placeholder="在此输入明天的计划..."></textarea>
         <button onclick="submitDiary()">永久保存</button>
     </div>
-    <div class="timeline" id="timeline">
-        <p class="loading">正在加载日记记录...</p>
-    </div>
+    <div class="timeline" id="timeline"></div>
 
     <script>
-        // 配置参数（需修改为你的信息）
-        const REPO = 'polaris200212/polaris200212.github.io'; // 你的仓库名
-        const TOKEN = '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'; // 需生成具有 repo 权限的 Token
+        // 配置参数
+        const REPO = 'polaris200212/polaris200212.github.io';
+        // 请替换为你的新Token（重要！）
+        const TOKEN = 'ghp_你的新Token这里'; 
         const DATA_FILE = '_data/diary.json';
-        
-        // 显示加载状态
-        function showLoading() {
-            document.getElementById('timeline').innerHTML = '<p class="loading">正在加载日记记录...</p>';
-        }
-        
-        // 显示错误信息
-        function showError(message) {
-            document.getElementById('timeline').innerHTML = `<p class="error">${message}</p>`;
+
+        // 显示状态
+        function showStatus(message, isError = false) {
+            const timeline = document.getElementById('timeline');
+            timeline.innerHTML = `<p class="${isError ? 'error' : 'loading'}">${message}</p>`;
         }
 
-        // 提交日记到 GitHub 仓库
+        // 提交日记
         async function submitDiary() {
             const content = document.getElementById('content').value.trim();
             if (!content) {
-                alert('请输入日记内容');
+                showStatus('请输入日记内容', true);
                 return;
             }
 
-            try {
-                // 禁用按钮防止重复提交
-                const btn = document.querySelector('button');
-                btn.disabled = true;
-                btn.textContent = '提交中...';
-                
-                // 获取 IP 和地理位置
-                const ipResponse = await fetch('https://api.ipify.org?format=json');
-                if (!ipResponse.ok) throw new Error('获取IP失败');
-                const ipData = await ipResponse.json();
-                
-                const locationResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
-                const location = locationResponse.ok ? await locationResponse.json() : {};
+            const btn = document.querySelector('button');
+            btn.disabled = true;
+            btn.textContent = '提交中...';
 
-                // 构建日记对象
+            try {
+                // 获取IP信息
+                const ip = await fetch('https://api.ipify.org?format=json')
+                    .then(r => r.ok ? r.json() : Promise.reject('IP获取失败'))
+                    .then(d => d.ip)
+                    .catch(() => '未知IP');
+
+                // 创建日记对象
                 const newEntry = {
                     timestamp: new Date().toISOString(),
                     content: content,
-                    ip: ipData.ip,
-                    city: location.city || "未知地区",
-                    country: location.country_name || "未知国家"
+                    ip: ip,
+                    city: '自动获取中...',
+                    country: '自动获取中...'
                 };
 
-                // 获取现有数据
-                const fileResponse = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_FILE}`, {
-                    headers: { 'Authorization': `token ${TOKEN}` }
-                });
-                
-                if (!fileResponse.ok) {
-                    // 如果文件不存在，创建新文件
-                    if (fileResponse.status === 404) {
-                        return await createNewDiaryFile(newEntry);
+                // 尝试获取位置信息（非阻塞）
+                fetch(`https://ipapi.co/${ip}/json/`)
+                    .then(r => r.ok ? r.json() : {})
+                    .then(location => {
+                        newEntry.city = location.city || "未知地区";
+                        newEntry.country = location.country_name || "未知国家";
+                    });
+
+                // 获取现有数据或创建新文件
+                let existingData = [];
+                let sha = null;
+
+                try {
+                    const fileRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_FILE}`, {
+                        headers: { 'Authorization': `token ${TOKEN}` }
+                    });
+                    
+                    if (fileRes.ok) {
+                        const fileData = await fileRes.json();
+                        existingData = JSON.parse(atob(fileData.content));
+                        sha = fileData.sha;
                     }
-                    throw new Error('获取数据失败');
-                }
-                
-                const fileData = await fileResponse.json();
-                const existingData = JSON.parse(atob(fileData.content));
+                } catch (e) {} // 忽略文件不存在的错误
+
                 existingData.push(newEntry);
 
                 // 更新文件
-                const updateResponse = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_FILE}`, {
+                const updateRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_FILE}`, {
                     method: 'PUT',
-                    headers: { 'Authorization': `token ${TOKEN}` },
+                    headers: { 
+                        'Authorization': `token ${TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
                     body: JSON.stringify({
                         message: `添加日记: ${new Date().toLocaleString()}`,
                         content: btoa(JSON.stringify(existingData, null, 2)),
-                        sha: fileData.sha
+                        sha: sha
                     })
                 });
 
-                if (!updateResponse.ok) throw new Error('更新失败');
-                
-                // 清空输入框并刷新显示
+                if (!updateRes.ok) {
+                    const errorData = await updateRes.json().catch(() => ({}));
+                    throw new Error(errorData.message || '更新失败');
+                }
+
                 document.getElementById('content').value = '';
                 await loadDiaries();
-                
+                showStatus('提交成功！', false);
+
             } catch (error) {
                 console.error('提交失败:', error);
-                showError(`提交失败: ${error.message}`);
+                showStatus(`提交失败: ${error.message}`, true);
             } finally {
-                // 恢复按钮状态
-                const btn = document.querySelector('button');
                 btn.disabled = false;
                 btn.textContent = '永久保存';
             }
         }
-        
-        // 创建新日记文件
-        async function createNewDiaryFile(firstEntry) {
-            const response = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_FILE}`, {
-                method: 'PUT',
-                headers: { 'Authorization': `token ${TOKEN}` },
-                body: JSON.stringify({
-                    message: '初始化日记文件',
-                    content: btoa(JSON.stringify([firstEntry], null, 2))
-                })
-            });
-            
-            if (!response.ok) throw new Error('创建文件失败');
-            return response.json();
-        }
 
-        // 加载历史日记
+        // 加载日记
         async function loadDiaries() {
             try {
-                showLoading();
+                showStatus('加载日记中...', false);
                 
-                // 添加时间戳防止缓存
                 const url = `https://raw.githubusercontent.com/${REPO}/main/${DATA_FILE}?t=${Date.now()}`;
-                const response = await fetch(url);
+                const res = await fetch(url);
                 
-                if (!response.ok) {
-                    if (response.status === 404) {
-                        return showError('日记文件不存在，请先提交第一条日记');
+                if (!res.ok) {
+                    if (res.status === 404) {
+                        return showStatus('还没有日记，快来写第一篇吧！', false);
                     }
                     throw new Error('加载失败');
                 }
-                
-                const data = await response.json();
+
+                const data = await res.json();
                 renderDiaries(data);
             } catch (error) {
-                console.error('加载日记失败:', error);
-                showError(`加载日记失败: ${error.message}`);
+                console.error('加载失败:', error);
+                showStatus(`加载失败: ${error.message}`, true);
             }
         }
-        
-        // 渲染日记列表
+
+        // 渲染日记
         function renderDiaries(data) {
             const container = document.getElementById('timeline');
             
             if (!data || data.length === 0) {
-                container.innerHTML = '<p>还没有日记记录，快来写下第一篇吧！</p>';
+                container.innerHTML = '<p>还没有日记记录</p>';
                 return;
             }
             
@@ -177,9 +165,9 @@
             `).join('');
         }
 
-        // 初始化加载
+        // 初始化
         loadDiaries();
-        setInterval(loadDiaries, 60000); // 每分钟自动刷新
+        setInterval(loadDiaries, 60000);
     </script>
 </body>
 </html>
