@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thoughts and Reflections</title>
+    <title>Wisdom of Philosophy and Religion</title>
     <style>
         /* 全局样式 */
         body {
             margin: 0;
             padding: 0;
-            font-family: "Georgia", serif;
-            background-color: #f9f9f9;
+            font-family: "思源宋体", "Noto Serif SC", serif;
+            background-color: #f5f3f0;
             color: #333;
             line-height: 1.8;
         }
@@ -18,214 +18,200 @@
         /* 标题样式 */
         header {
             text-align: center;
-            padding: 40px 20px;
-            background-color: #ffffff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 60px 20px;
+            background: #FAF0E6;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         header h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin: 0;
-            color: #444;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         /* 主内容区样式 */
         main {
-            max-width: 1000px;
-            margin: 20px auto;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+        }
+
+        /* 摘抄卡片 */
+        .quote-card {
+            background: white;
+            border-radius: 12px;
             padding: 30px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        main p {
-            font-size: 1.1rem;
-            text-align: justify;
-            margin-bottom: 20px;
+        .quote-card:hover {
+            transform: translateY(-3px);
         }
 
-        main blockquote {
-            font-style: italic;
-            color: #555;
-            border-left: 4px solid #ddd;
-            padding-left: 20px;
-            margin: 20px 0;
-        }
-
-        /* 模块化标题样式 */
-        main h2 {
-            font-size: 1.8rem;
+        .quote-text {
+            font-size: 1.2rem;
             color: #444;
-            margin-top: 30px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
+            margin: 0 0 15px;
+            line-height: 1.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-source {
+            text-align: right;
+            font-size: 0.95rem;
+            color: #666;
+            margin: 0;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
         }
 
         /* 分页按钮样式 */
         .pagination {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 40px;
         }
 
         .pagination button {
-            background-color: #444;
-            color: #fff;
+            background-color: #6b5b95;
+            color: white;
             border: none;
-            padding: 10px 20px;
-            margin: 0 5px;
-            border-radius: 4px;
+            padding: 12px 25px;
+            margin: 0 8px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background-color: #52457d;
+            transform: scale(1.05);
         }
 
         .pagination button:disabled {
-            background-color: #ccc;
+            background-color: #d3d3d3;
             cursor: not-allowed;
         }
 
-        /* 底部版权样式 */
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 0.9rem;
-            color: #777;
-            background-color: #ffffff;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            .quote-text {
+                font-size: 1.1rem;
+            }
+            .quote-card {
+                padding: 20px;
+            }
+        }
+
+        /* 装饰色块 */
+        .color-mark {
+            position: absolute;
+            right: -4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 40px;
+            border-radius: 4px 0 0 4px;
+            z-index: 0;
         }
     </style>
 </head>
 <body>
-    <!-- 标题 -->
     <header>
-        <h1>Thoughts and Reflections</h1>
+        <h1>Wisdom of Philosophy and Religion</h1>
     </header>
 
-    <!-- 主内容区 -->
     <main>
-        <!-- 固定显示的英文前言 -->
-        <div id="introduction">
-            <p>Welcome to my personal space of thoughts and reflections. Here, I share some ideas that have been on my mind recently. This is a place where words flow freely, capturing moments of insight, curiosity, and wonder.</p>
-            <blockquote style="text-align: center;"> "The unexamined life is not worth living." — Socrates </blockquote>
-            <p>In this fast-paced world, it's easy to get caught up in the hustle and bustle of daily life. However, taking a moment to pause and reflect can be incredibly rewarding. It allows us to reconnect with ourselves and find meaning in the chaos.</p>
-            <p>Whether it's through writing, reading, or simply observing the world around us, reflection opens doors to new perspectives. It helps us grow, learn, and appreciate the beauty of life in all its forms.</p>
-            <p>Thank you for visiting this page. I hope these words resonate with you and inspire you to embark on your own journey of self-discovery.</p>
-        </div>
-
-        <!-- 分页内容区 -->
         <div id="content">
-            <div class="page">
-                <h2>1. 科学的定义</h2>
-                <p>
-                自然科学是人与自然对话。<br>
-                社会科学是人与人对话。<br>
-                人文学科是人与自己对话。<br>
-                人文学科不是科学，科学的本质是可证伪，而人文学科不可证伪，也没有必要证伪。<br>
-                科学的尽头是哲学，哲学的尽头是神学。<br>
-                理学的落实是工学，而文学不可落实。<br>
-                自然科学是完全的科学，因为他用科学的方法解释自然世界，而自然世界的行为是科学的。<br>
-                社会科学之所以是半个科学，是因为他试图用科学的方法解释人类社会，而人类社会的行为不一定科学。
-                </p>
+            <!-- 示例数据 -->
+            <div class="quote-card">
+                <p class="quote-text">生存还是毁灭，这是一个值得考虑的问题。默然忍受命运的暴虐的毒箭，或是挺身反抗人世的无涯的苦难，通过斗争把它们扫清，这两种行为，哪一种更高贵？</p>
+                <p class="quote-source">——《哈姆雷特》第三幕第一场</p>
             </div>
 
-            <div class="page">
-                <h2>2. 智商和情商</h2>
-                <p>
-                我给智商和情商下了一个定义：<br>
-                智商其实就是人类按照自然法则进行思考和行动的能力，而情商则是人类按照他人意志进行思考和行动的能力。<br>
-                我们每次说情商高，往往是评价他人，从来没有人说自己情商高不高。这是因为情商永远是他人对你的评价。如果你能正确按照他的意志进行思考和行动，他便会认为你情商高。
-                由于智商的遵循对象是统一的自然法则，而情商的遵循对象则是千姿百态的人，因此人们对于某个人智商高不高不会有什么异议，但对于某个人情商高不高却各有各的说法。<br>
-                情商的根本还是你能不能够为他人提供正向效用，包括但不限于金钱、权力以及情感效用，但这并不代表你所做的事情就是正确的、合法的、合乎社会道德准则的。
-                所以我们发现，某一个社会情商高不高，对他的科技发不发达、文明进步、进步丝毫没有影响，因为情商并不能增进人类对自然、对自己的认知。<br>
-                另外，我们常说己所不欲勿施于人，认为这似乎是一种情商的表现。但比如我不喜欢吃榴莲，而别人喜欢吃榴莲，这个时候如果我认为己所不欲勿施于人，送水果的时候不送他榴莲，那么这是一种情商高的表现吗？当然不是。<br>
-                己所不欲勿施于人在大多数情况下成立的原因是人类有一些共同的效用点，比如我们都不希望被人欺骗，我们都希望彼此能够守时。<br>
-                而当面临一些个性化、差异化的效用点是，比如一个人对香菜、榴莲的爱好，对是否要遵守传统社会的旧俗，己所不欲勿施于人这句话便不再适用。<br>
-                现在有人加入了财商和德商作为衡量一个人的标准，其实是一样的道理，财商就是人按照金钱的法则进行思考和行动的能力，而德商则是人按照整体社会道德准则进行思考和行动的能力。
-                </p>
+            <div class="quote-card">
+                <p class="quote-text">所有幸福的家庭都是相似的，而不幸的家庭各有各的不幸。</p>
+                <p class="quote-source">——《安娜·卡列尼娜》第一部第一节</p>
             </div>
 
-            <div class="page">
-                <h2>3. 社会科学的公理化</h2>
-                <p>社会科学，或者说社会的运行规律，或者说哲学的讨论，是否向自然科学一样存在最基本的几个公理或者是基本命题，所有的问题和争议都可以最终归结到这些命题。</p>
+            <div class="quote-card">
+                <p class="quote-text">真正令人感动的，是一个人的成熟：他为自己所自愿选择的崇高理想而奉献，矢志不渝。</p>
+                <p class="quote-source">——《约翰·克利斯朵夫》卷七·初版序</p>
             </div>
 
-            <div class="page">
-                <h2>4. 人工智能生成结果的知识产权</h2>
-                <p>一个人用人工智能生成的内容，原创者是否是他？所有权是否完全属于他？需不需要标注人工智能平台也同样享有知识产权？</p>
-                <p>我认为显然不是的，虽然人工智能能生成丰富的、使用者都没有想到的内容，但决定什么是好的，应该采用什么内容的完全是创作者。如果还不能说服你，一个例子就可以解决所有争端：铁匠打一把菜刀，用的锤子不是他造的，有人说菜刀的原创者/所有权归锤子或制造锤子的人所有吗？如果不是，那人工智能生成的东西又怎么是呢？</p>
+            <div class="quote-card">
+                <p class="quote-text">世界上只有一种真正的英雄主义，那就是在认识生活的真相后依然热爱生活。</p>
+                <p class="quote-source">——《米开朗基罗传》</p>
             </div>
 
-            <div class="page">
-                <h2>5. </h2>
-                <p>111</p>
-            </div>
-
-            <div class="page">
-                <h2>6. </h2>
-                <p>111</p>
-            </div>
-
-            <div class="page">
-                <h2>7. </h2>
-                <p>111</p>
-            </div>
-
-            <div class="page">
-                <h2>8. </h2>
-                <p>111</p>
-            </div>
-
-            <div class="page">
-                <h2>9. </h2>
-                <p>111</p>
-            </div>
-
-            <div class="page">
-                <h2>10. </h2>
-                <p>111</p>
-            </div>
-
-            <div class="page">
-                <h2>11. </h2>
-                <p>111</p>
-            </div>
-
-            <div class="page">
-                <h2>12. </h2>
-                <p>111</p>
+            <div class="quote-card">
+                <p class="quote-text">人类的全部智慧都包含在这两个词中：等待和希望。</p>
+                <p class="quote-source">——《基督山伯爵》第117章</p>
             </div>
         </div>
 
-        <!-- 分页按钮 -->
         <div class="pagination">
             <button id="prevPage" disabled>上一页</button>
             <button id="nextPage">下一页</button>
         </div>
     </main>
 
-    <!-- 底部版权 -->
-    <footer>
-        &copy; 2023 My Personal Space. All rights reserved.
-    </footer>
-
     <script>
-        // 分页逻辑
-        const pages = document.querySelectorAll('#content .page');
+        // 配色方案库
+        const colorSchemes = [
+            { border: '#d87c6e', bg: '#fff5f3' },  // 赤陶
+            { border: '#8a9b6e', bg: '#f9fbf2' },  // 竹绿
+            { border: '#b28fce', bg: '#fdf7ff' },  // 淡紫
+            { border: '#d4a5a5', bg: '#fff8f8' },  // 胭脂
+            { border: '#6b93b5', bg: '#f5f9fd' },  // 天青
+            { border: '#0074d9', bg: '#ebf8ff' }   // 宝蓝
+        ];
+
+        // 智能配色函数
+        function applyColorScheme() {
+            document.querySelectorAll('.quote-card').forEach((card, index) => {
+                // 随机选择配色方案（可改为 index % N 实现循环配色）
+                const scheme = colorSchemes[Math.floor(Math.random() * colorSchemes.length)];
+                
+                // 应用配色
+                card.style.borderLeft = `4px solid ${scheme.border}`;
+                card.style.backgroundColor = scheme.bg;
+
+                // 添加装饰色块
+                const mark = document.createElement('div');
+                mark.className = 'color-mark';
+                mark.style.backgroundColor = scheme.border;
+                card.appendChild(mark);
+            });
+        }
+
+        // 分页系统
         const itemsPerPage = 10;
         let currentPage = 0;
-        const totalPages = Math.ceil(pages.length / itemsPerPage);
-
+        
         function updateVisibility() {
-            pages.forEach((page, index) => {
-                const shouldShow = index >= currentPage * itemsPerPage && 
-                                 index < (currentPage + 1) * itemsPerPage;
-                page.style.display = shouldShow ? 'block' : 'none';
+            const cards = document.querySelectorAll('.quote-card');
+            cards.forEach((card, index) => {
+                card.style.display = (index >= currentPage * itemsPerPage && 
+                                    index < (currentPage + 1) * itemsPerPage) ? 
+                                    'block' : 'none';
             });
 
-            // 更新按钮状态
             document.getElementById('prevPage').disabled = currentPage === 0;
-            document.getElementById('nextPage').disabled = currentPage === totalPages - 1;
+            document.getElementById('nextPage').disabled = 
+                currentPage === Math.ceil(cards.length / itemsPerPage) - 1;
         }
 
         // 事件监听
@@ -237,14 +223,18 @@
         });
 
         document.getElementById('nextPage').addEventListener('click', () => {
-            if (currentPage < totalPages - 1) {
+            const total = document.querySelectorAll('.quote-card').length;
+            if (currentPage < Math.ceil(total / itemsPerPage) - 1) {
                 currentPage++;
                 updateVisibility();
             }
         });
 
-        // 初始状态
-        updateVisibility();
+        // 初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            applyColorScheme();
+            updateVisibility();
+        });
     </script>
 </body>
 </html>
