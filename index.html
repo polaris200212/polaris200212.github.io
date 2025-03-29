@@ -531,7 +531,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 			                // const inputHash = CryptoJS.AES.encrypt(inputPassword, "").toString();
 
 					// 验证密码（后续如需加密，inputPassword改为inputHash，password改为storedHash）
-					if(inputPassword === storedHash) {
+					if(inputPassword === password) {
 						document.getElementById("authOverlay").style.display = "none";
 						document.getElementById("main").style.display = "block";
 						document.getElementById("footer").style.display = "block";
