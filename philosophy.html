@@ -19,17 +19,30 @@
         header {
             text-align: center;
             padding: 60px 20px;
-            background: #FAF0E6;
-            color: white;
+            background: #F5EFE0;
             margin-bottom: 40px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: rgba(78, 52, 46, 0.2);
         }
 
         header h1 {
             font-size: 2.8rem;
             margin: 0;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            letter-spacing: 3px;
+            color: #4E342E;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+            font-weight: 500;
         }
 
         /* 主内容区样式 */
@@ -171,11 +184,11 @@
     <script>
         // 配色方案库
         const colorSchemes = [
-            { border: '#d87c6e', bg: '#fff5f3' },  // 赤陶
             { border: '#8a9b6e', bg: '#f9fbf2' },  // 竹绿
             { border: '#b28fce', bg: '#fdf7ff' },  // 淡紫
             { border: '#d4a5a5', bg: '#fff8f8' },  // 胭脂
             { border: '#6b93b5', bg: '#f5f9fd' },  // 天青
+            { border: '#d87c6e', bg: '#fff5f3' },  // 赤陶
             { border: '#0074d9', bg: '#ebf8ff' }   // 宝蓝
         ];
 
