@@ -3,7 +3,6 @@
 <head>
     <title>Polaris Diary</title>
     <style>
-        /* 保持原有样式不变 */
         body { max-width: 800px; margin: 0 auto; padding: 20px; font-family: -apple-system, sans-serif; }
         .editor { border: 1px solid #e1e4e8; padding: 20px; border-radius: 6px; margin-bottom: 30px; }
         textarea { width: 100%; height: 100px; padding: 10px; border: 1px solid #d1d5da; margin-bottom: 10px; }
@@ -13,11 +12,13 @@
         .entry:before { content: ""; position: absolute; left: -26px; top: 50%; width: 12px; height: 12px; background: #0366d6; border-radius: 50%; }
         .loading { color: #586069; font-style: italic; }
         .error { color: #cb2431; }
+        .token-warning { background: #fff8c5; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
     <div class="editor">
         <h2>明日日记</h2>
+        <div id="tokenStatus" class="token-warning">⚠️ 正在验证GitHub Token...</div>
         <textarea id="content" placeholder="在此输入明天的计划..."></textarea>
         <button onclick="submitDiary()">永久保存</button>
     </div>
@@ -26,10 +27,55 @@
     <script>
         // 配置参数
         const REPO = 'polaris200212/polaris200212.github.io';
-        const TOKEN = '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'; // 替换为你的Token
+        // ⚠️ 重要：按照下面说明获取新Token
+        const TOKEN = localStorage.getItem('github_token') || prompt("请输入你的GitHub Token:");
         const DATA_FILE = '_data/diary.json';
 
-        // 解决中文Base64编码问题
+        // 初始化Token验证
+        checkToken();
+
+        // 验证Token有效性
+        async function checkToken() {
+            const statusEl = document.getElementById('tokenStatus');
+            
+            if (!TOKEN) {
+                statusEl.innerHTML = '❌ 未提供GitHub Token';
+                return false;
+            }
+
+            try {
+                statusEl.textContent = '🔍 正在验证Token...';
+                const res = await fetch(`https://api.github.com/repos/${REPO}`, {
+                    headers: { 'Authorization': `token ${TOKEN}` }
+                });
+
+                if (!res.ok) {
+                    localStorage.removeItem('github_token');
+                    statusEl.innerHTML = '❌ Token无效或已过期<br>请<a href="https://github.com/settings/tokens/new" target="_blank">创建新Token</a>并粘贴到这里:'
+                        + '<input type="text" id="newToken" style="width:100%;margin:5px 0">'
+                        + '<button onclick="updateToken()">更新Token</button>';
+                    return false;
+                }
+
+                localStorage.setItem('github_token', TOKEN);
+                statusEl.innerHTML = '✅ Token验证通过';
+                return true;
+            } catch (error) {
+                statusEl.innerHTML = '⚠️ 网络错误，请刷新重试';
+                return false;
+            }
+        }
+
+        // 更新Token
+        function updateToken() {
+            const newToken = document.getElementById('newToken').value.trim();
+            if (!newToken) return;
+            
+            localStorage.setItem('github_token', newToken);
+            location.reload();
+        }
+
+        // UTF-8编码解决方案
         function encodeUTF8(str) {
             return encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
                 return String.fromCharCode('0x' + p1);
@@ -40,20 +86,13 @@
             return btoa(encodeUTF8(str));
         }
 
-        function safeAtob(str) {
-            return decodeURIComponent(Array.from(atob(str)).map(c => {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-        }
-
-        // 显示状态
-        function showStatus(message, isError = false) {
-            const timeline = document.getElementById('timeline');
-            timeline.innerHTML = `<p class="${isError ? 'error' : 'loading'}">${message}</p>`;
-        }
-
         // 提交日记
         async function submitDiary() {
+            if (!await checkToken()) {
+                alert('请先配置有效的GitHub Token');
+                return;
+            }
+
             const content = document.getElementById('content').value.trim();
             if (!content) {
                 showStatus('请输入日记内容', true);
@@ -85,7 +124,6 @@
                     .then(location => {
                         newEntry.city = location.city || "未知地区";
                         newEntry.country = location.country_name || "未知国家";
-                        // 自动更新显示
                         loadDiaries();
                     });
 
@@ -100,7 +138,7 @@
                     
                     if (fileRes.ok) {
                         const fileData = await fileRes.json();
-                        existingData = JSON.parse(safeAtob(fileData.content));
+                        existingData = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
                         sha = fileData.sha;
                     }
                 } catch (e) {
@@ -109,7 +147,7 @@
 
                 existingData.push(newEntry);
 
-                // 更新文件（使用安全编码）
+                // 更新文件
                 const updateRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_FILE}`, {
                     method: 'PUT',
                     headers: { 
@@ -186,9 +224,15 @@
             `).join('');
         }
 
+        // 显示状态
+        function showStatus(message, isError = false) {
+            const timeline = document.getElementById('timeline');
+            timeline.innerHTML = `<p class="${isError ? 'error' : 'loading'}">${message}</p>`;
+        }
+
         // 初始化加载
         loadDiaries();
-        setInterval(loadDiaries, 60000); // 每分钟自动刷新
+        setInterval(loadDiaries, 60000);
     </script>
 </body>
 </html>
