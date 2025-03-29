@@ -211,7 +211,7 @@
             </div>
         </div>
         
-        <!-- 分页按钮 -->
+    <!-- 分页按钮 -->
         <div class="pagination">
             <button id="prevPage" disabled>上一页</button>
             <button id="nextPage">下一页</button>
@@ -225,7 +225,7 @@
 
     <script>
         // 获取所有内容条目
-        const items = document.querySelectorAll('#content > *'); // 包括 p, h2, blockquote 等
+        const items = Array.from(document.querySelectorAll('#content > *')); // 包括 p, h2, blockquote 等
         const itemsPerPage = 10; // 每页显示的条目数
         let currentPage = 0;
 
@@ -234,6 +234,7 @@
             const start = pageIndex * itemsPerPage;
             const end = start + itemsPerPage;
 
+            // 遍历所有条目，设置显示或隐藏
             items.forEach((item, index) => {
                 item.style.display = (index >= start && index < end) ? 'block' : 'none';
             });
