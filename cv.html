@@ -6,45 +6,75 @@
     <title>Dongyi Zhao - Peking University</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
             line-height: 1.6;
-            max-width: 1200px;
+            max-width: 800px; /* 缩小页面宽度 */
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
             color: #333;
         }
         .header {
             text-align: center;
             border-bottom: 2px solid #003366;
-            padding-bottom: 20px;
+            padding-bottom: 25px;
             margin-bottom: 30px;
         }
         h1 {
             color: #003366;
-            margin: 10px 0;
+            margin: 15px 0 10px;
+            font-size: 2.2em;
+            letter-spacing: 0.5px;
+        }
+        .header p {
+            margin: 8px 0;
+            font-size: 1.1em;
         }
         h2 {
             color: #003366;
             border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-            margin-top: 30px;
+            padding-bottom: 8px;
+            margin-top: 35px;
+            font-size: 1.4em;
+            letter-spacing: 0.3px;
         }
         .section {
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
         .item {
-            margin: 15px 0;
+            margin: 20px 0;
+            padding-left: 15px;
+            border-left: 2px solid #f0f0f0;
+        }
+        .education-item, .award-item, .project-item, .leadership-item {
+            margin-bottom: 18px;
+        }
+        .institution, .award-title, .project-title, .position {
+            font-weight: 600;
+            font-size: 1.05em;
+            display: block;
+            margin-bottom: 3px;
         }
         .time {
             color: #666;
             font-style: italic;
+            font-size: 0.9em;
+        }
+        .details, .org {
+            color: #555;
+            font-size: 0.95em;
+            margin-top: 2px;
         }
         a {
             color: #003366;
             text-decoration: none;
+            transition: color 0.3s;
         }
         a:hover {
+            color: #0056b3;
             text-decoration: underline;
+        }
+        .contact-info {
+            line-height: 1.8;
         }
     </style>
 </head>
@@ -57,96 +87,98 @@
 
     <section class="section">
         <h2>Education</h2>
-    
-            <!-- 大学阶段 -->
-            <div class="item">
-                <div class="education-item">
-                    <span class="institution">北京大学</span>
-                    <span class="time">2022 - 至今</span>
-                    <div class="details">本科在读</div>
-                </div>
-            </div>
         
-            <!-- 高中阶段 -->
-            <div class="item">
-                <div class="education-item">
-                    <span class="institution">廉江市实验学校</span>
-                    <span class="time">2021 - 2022</span>
-                </div>
-                <div class="education-item">
-                    <span class="institution">深圳中学</span>
-                    <span class="time">2018 - 2021</span>
-                </div>
+        <div class="item">
+            <div class="education-item">
+                <span class="institution">北京大学</span>
+                <span class="time">2022 - Present</span>
+                <div class="details">Bachelor of Economics (Expected 2026)</div>
             </div>
-        
-            <!-- 初中阶段 -->
-            <div class="item">
-                <div class="education-item">
-                    <span class="institution">深圳中学初中部</span>
-                    <span class="time">2015 - 2018</span>
-                </div>
+            
+            <div class="education-item">
+                <span class="institution">廉江市实验学校</span>
+                <span class="time">2021 - 2022</span>
             </div>
-        
-            <!-- 小学阶段 -->
-            <div class="item">
-                <div class="education-item">
-                    <span class="institution">深圳市荔园小学</span>
-                    <span class="time">2015年毕业</span>
-                </div>
+            
+            <div class="education-item">
+                <span class="institution">深圳中学</span>
+                <span class="time">2018 - 2021</span>
             </div>
-        </section>
+            
+            <div class="education-item">
+                <span class="institution">深圳中学初中部</span>
+                <span class="time">2015 - 2018</span>
+            </div>
+            
+            <div class="education-item">
+                <span class="institution">深圳市荔园小学</span>
+                <span class="time">Graduated 2015</span>
+            </div>
+        </div>
+    </section>
 
     <section class="section">
         <h2>Honors & Awards</h2>
+        
         <div class="item">
-            <div class="award">北京大学国家发展研究院朗润青年奖学金</div>
-            <div class="time">2024</div>
-            <div>北京大学国家发展研究院</div>
-        </div>
-
-        <div class="item">
-            <div class="award">北大本科生优秀课程论文</div>
-            <div class="time">2023</div>
-            <div>北京大学</div>
-        </div>
-
-        <div class="item">
-            <div class="award">北京大学新生二等奖学金</div>
-            <div class="time">2022</div>
-            <div>北京大学</div>
+            <div class="award-item">
+                <span class="award-title">北京大学国家发展研究院朗润青年奖学金</span>
+                <span class="time">2024</span>
+                <div class="org">National School of Development, PKU</div>
+            </div>
+            
+            <div class="award-item">
+                <span class="award-title">北大本科生优秀课程论文</span>
+                <span class="time">2023</span>
+                <div class="org">Peking University</div>
+            </div>
+            
+            <div class="award-item">
+                <span class="award-title">北京大学新生二等奖学金</span>
+                <span class="time">2022</span>
+                <div class="org">Peking University</div>
+            </div>
         </div>
     </section>
 
     <section class="section">
         <h2>Research Projects</h2>
+        
         <div class="item">
-            <div class="grant-title">北京大学2024年“本科生科研训练”，获北京市创新计划（文）资助</div>
-            <div class="time">2024-2025</div>
+            <div class="project-item">
+                <span class="project-title">北京大学2024年"本科生科研训练"</span>
+                <span class="time">2024 - 2025</span>
+                <div class="details">Funded by Beijing Innovation Program (Humanities)</div>
+            </div>
         </div>
-        <!-- 其他项目条目 -->
     </section>
     
     <section class="section">
         <h2>Leadership & Service</h2>
+        
         <div class="item">
-            <div class="position">北京大学国家发展研究院学生会学术部部长</div>
-            <div class="time">2024 - </div>
+            <div class="leadership-item">
+                <span class="position">学术部部长</span>
+                <span class="time">2024 - Present</span>
+                <div class="org">Student Union, National School of Development, PKU</div>
             </div>
-        </div>
-    
-        <div class="item">
-            <div class="position">北京大学国家发展研究院学生会学术部部员</div>
-            <div class="time">2023 - 2024</div>
+            
+            <div class="leadership-item">
+                <span class="position">学术部部员</span>
+                <span class="time">2023 - 2024</span>
+                <div class="org">Student Union, National School of Development, PKU</div>
             </div>
         </div>
     </section>
 
     <section class="section">
         <h2>Contact</h2>
-        <p>National School of Development<br>
-        Peking University<br>
-        Beijing, China 100871<br>
-        Email: 2200015443@stu.pku.edu.cn</p>
+        <div class="contact-info">
+            National School of Development<br>
+            Peking University<br>
+            Beijing, China 100871<br>
+            Email: 2200015443@stu.pku.edu.cn
+        </div>
     </section>
 </body>
 </html>
