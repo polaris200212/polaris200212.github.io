@@ -9,7 +9,7 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: "Georgia", serif; /* 使用优雅的衬线字体 */
+            font-family: "Georgia", serif;
             background-color: #f9f9f9;
             color: #333;
             line-height: 1.8;
@@ -41,7 +41,7 @@
 
         main p {
             font-size: 1.1rem;
-            text-align: justify; /* 文本两端对齐 */
+            text-align: justify;
             margin-bottom: 20px;
         }
 
@@ -104,28 +104,31 @@
 
     <!-- 主内容区 -->
     <main>
+        <!-- 固定显示的英文前言 -->
+        <div id="introduction">
             <p>Welcome to my personal space of thoughts and reflections. Here, I share some ideas that have been on my mind recently. This is a place where words flow freely, capturing moments of insight, curiosity, and wonder.</p>
             <blockquote>"The unexamined life is not worth living." — Socrates</blockquote>
             <p>In this fast-paced world, it's easy to get caught up in the hustle and bustle of daily life. However, taking a moment to pause and reflect can be incredibly rewarding. It allows us to reconnect with ourselves and find meaning in the chaos.</p>
             <p>Whether it's through writing, reading, or simply observing the world around us, reflection opens doors to new perspectives. It helps us grow, learn, and appreciate the beauty of life in all its forms.</p>
             <p>Thank you for visiting this page. I hope these words resonate with you and inspire you to embark on your own journey of self-discovery.</p>
+        </div>
 
+        <!-- 分页内容区 -->
         <div id="content">
-            <!-- 内容条目 -->      
             <div class="page">
                 <h2>1. 科学的定义</h2>
                 <p>
                 自然科学是人与自然对话。<br>
                 社会科学是人与人对话。<br>
                 人文学科是人与自己对话。<br>
-                人文学科不是科学，科学的本质是可证伪，而人文学科不可证伪，也没有必要证伪。
+                人文学科不是科学，科学的本质是可证伪，而人文学科不可证伪，也没有必要证伪。<br>
                 科学的尽头是哲学，哲学的尽头是神学。<br>
                 理学的落实是工学，而文学不可落实。<br>
                 自然科学是完全的科学，因为他用科学的方法解释自然世界，而自然世界的行为是科学的。<br>
                 社会科学之所以是半个科学，是因为他试图用科学的方法解释人类社会，而人类社会的行为不一定科学。
-            </p>
-
+                </p>
             </div>
+
             <div class="page">
                 <h2>2. 智商和情商</h2>
                 <p>
@@ -139,79 +142,61 @@
                 己所不欲勿施于人在大多数情况下成立的原因是人类有一些共同的效用点，比如我们都不希望被人欺骗，我们都希望彼此能够守时。<br>
                 而当面临一些个性化、差异化的效用点是，比如一个人对香菜、榴莲的爱好，对是否要遵守传统社会的旧俗，己所不欲勿施于人这句话便不再适用。<br>
                 现在有人加入了财商和德商作为衡量一个人的标准，其实是一样的道理，财商就是人按照金钱的法则进行思考和行动的能力，而德商则是人按照整体社会道德准则进行思考和行动的能力。
-            </p>
-
+                </p>
             </div>
+
             <div class="page">
                 <h2>3. 社会科学的公理化</h2>
                 <p>社会科学，或者说社会的运行规律，或者说哲学的讨论，是否向自然科学一样存在最基本的几个公理或者是基本命题，所有的问题和争议都可以最终归结到这些命题。</p>
             </div>
-        </div>
 
-            </div>
             <div class="page">
                 <h2>4. </h2>
                 <p>111</p>
             </div>
-        </div>
 
-        </div>
             <div class="page">
                 <h2>5. </h2>
                 <p>111</p>
             </div>
-        </div>
 
-        </div>
             <div class="page">
                 <h2>6. </h2>
                 <p>111</p>
             </div>
-        </div>
 
-        </div>
             <div class="page">
                 <h2>7. </h2>
                 <p>111</p>
             </div>
-        </div>
 
-        </div>
             <div class="page">
                 <h2>8. </h2>
                 <p>111</p>
             </div>
-        </div>
 
-        </div>
             <div class="page">
                 <h2>9. </h2>
                 <p>111</p>
             </div>
-        </div>
 
-        </div>
             <div class="page">
                 <h2>10. </h2>
                 <p>111</p>
             </div>
-        </div>
 
-        </div>
             <div class="page">
                 <h2>11. </h2>
                 <p>111</p>
             </div>
-        </div>
 
-        </div>
             <div class="page">
                 <h2>12. </h2>
                 <p>111</p>
             </div>
         </div>
-        
-    <!-- 分页按钮 -->
+
+        <!-- 分页按钮 -->
         <div class="pagination">
             <button id="prevPage" disabled>上一页</button>
             <button id="nextPage">下一页</button>
@@ -224,49 +209,41 @@
     </footer>
 
     <script>
-        // 获取所有内容条目
-        const items = Array.from(document.querySelectorAll('#content > *')); // 包括 p, h2, blockquote 等
-        const itemsPerPage = 10; // 每页显示的条目数
+        // 分页逻辑
+        const pages = document.querySelectorAll('#content .page');
+        const itemsPerPage = 10;
         let currentPage = 0;
+        const totalPages = Math.ceil(pages.length / itemsPerPage);
 
-        // 显示指定页面的内容
-        function showPage(pageIndex) {
-            const start = pageIndex * itemsPerPage;
-            const end = start + itemsPerPage;
-
-            // 遍历所有条目，设置显示或隐藏
-            items.forEach((item, index) => {
-                item.style.display = (index >= start && index < end) ? 'block' : 'none';
+        function updateVisibility() {
+            pages.forEach((page, index) => {
+                const shouldShow = index >= currentPage * itemsPerPage && 
+                                 index < (currentPage + 1) * itemsPerPage;
+                page.style.display = shouldShow ? 'block' : 'none';
             });
+
+            // 更新按钮状态
+            document.getElementById('prevPage').disabled = currentPage === 0;
+            document.getElementById('nextPage').disabled = currentPage === totalPages - 1;
         }
 
-        // 初始化第一页
-        showPage(currentPage);
-
-        // 上一页按钮点击事件
+        // 事件监听
         document.getElementById('prevPage').addEventListener('click', () => {
             if (currentPage > 0) {
                 currentPage--;
-                showPage(currentPage);
-                document.getElementById('nextPage').disabled = false;
-                if (currentPage === 0) {
-                    document.getElementById('prevPage').disabled = true;
-                }
+                updateVisibility();
             }
         });
 
-        // 下一页按钮点击事件
         document.getElementById('nextPage').addEventListener('click', () => {
-            const totalPages = Math.ceil(items.length / itemsPerPage);
             if (currentPage < totalPages - 1) {
                 currentPage++;
-                showPage(currentPage);
-                document.getElementById('prevPage').disabled = false;
-                if (currentPage === totalPages - 1) {
-                    document.getElementById('nextPage').disabled = true;
-                }
+                updateVisibility();
             }
         });
+
+        // 初始状态
+        updateVisibility();
     </script>
 </body>
 </html>
