@@ -514,8 +514,9 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 			<!-- 密码验证模块 -->
 			<script>
 				// 安全配置 (使用前必须修改以下三项)
-				<!-- const salt = "pku_nsd_2024@dx!";      // 加密盐值(需自行修改) -->
-				const storedHash = "zdy20021223"; // 加密后的密码
+				// const salt = "pku_nsd_2024@dx!";      // 加密盐值(需自行修改)
+				// const storedHash = "U2FsdGVkX1+TU72rWzzUPq6qledH+m+cp+ZcMQn4iHk="; // 加密后的密码
+				const password = "sol142857";
 				const maxAttempts = 10;                // 最大尝试次数
 				let attempts = 0;
 
@@ -527,10 +528,10 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 					
 					// 获取用户输入并加密
 			                const inputPassword = document.getElementById("passwordInput").value;
-			                const inputHash = CryptoJS.AES.encrypt(inputPassword, "").toString();
+			                // const inputHash = CryptoJS.AES.encrypt(inputPassword, "").toString();
 
-					// 验证密码
-					if(inputHash === storedHash) {
+					// 验证密码（后续如需加密，inputPassword改为inputHash，password改为storedHash）
+					if(inputPassword === storedHash) {
 						document.getElementById("authOverlay").style.display = "none";
 						document.getElementById("main").style.display = "block";
 						document.getElementById("footer").style.display = "block";
