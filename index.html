@@ -518,19 +518,19 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 				<!-- const salt = "pku_nsd_2024@dx!";      // 加密盐值(需自行修改) -->
 				const storedHash = "zdy20021223"; // 加密后的密码
 				const maxAttempts = 10;                // 最大尝试次数
-
 				let attempts = 0;
+
 				function checkPassword() {
-					if(attempts >= maxAttempts) {
+					if(attempts > maxAttempts) {
 						alert("尝试次数过多，请稍后再试");
 						return;
 					}
 					
-					const inputHash = CryptoJS.AES.encrypt(
-						document.getElementById("passwordInput").value 
-						<!-- ,salt -->
-					).toString();
+					// 获取用户输入并加密
+			                const inputPassword = document.getElementById("passwordInput").value;
+			                const inputHash = CryptoJS.AES.encrypt(inputPassword, "").toString();
 
+					// 验证密码
 					if(inputHash === storedHash) {
 						document.getElementById("authOverlay").style.display = "none";
 						document.getElementById("main").style.display = "block";
@@ -547,14 +547,17 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 				}
 
 				// 初始化验证
-				document.addEventListener("DOMContentLoaded", () => {
-					if(localStorage.getItem("authToken") === storedHash) {
-						document.getElementById("authOverlay").style.display = "none";
+				    document.addEventListener("DOMContentLoaded", () => {
+					const authToken = localStorage.getItem("authToken");
+					if (authToken === storedHash) {
+					    document.getElementById("authOverlay").style.display = "none";
+					    document.getElementById("main").style.display = "block";
+					    document.getElementById("footer").style.display = "block";
 					} else {
-						document.getElementById("main").style.display = "none";
-						document.getElementById("footer").style.display = "none";
+					    document.getElementById("main").style.display = "none";
+					    document.getElementById("footer").style.display = "none";
 					}
-				});
+				    });
 			</script>
 
 	</body>
