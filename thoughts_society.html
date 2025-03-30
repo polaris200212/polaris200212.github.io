@@ -325,7 +325,8 @@
         // 分页逻辑
         const pages = document.querySelectorAll('#content .page');
         const itemsPerPage = 10;
-        let currentPage = 0;
+        let currentPage = localStorage.getItem('currentPage') || 0;
+        currentPage = parseInt(currentPage);
         const totalPages = Math.ceil(pages.length / itemsPerPage);
         
         function updateVisibility() {
@@ -334,27 +335,32 @@
                                  index < (currentPage + 1) * itemsPerPage;
                 page.style.display = shouldShow ? 'block' : 'none';
             });
-
+    
             // 更新按钮状态
             document.getElementById('prevPage').disabled = currentPage === 0;
             document.getElementById('nextPage').disabled = currentPage === totalPages - 1;
+            
+            // 滚动到顶部
+            window.scrollTo(0, 0);
         }
-
+    
         // 事件监听
         document.getElementById('prevPage').addEventListener('click', () => {
             if (currentPage > 0) {
                 currentPage--;
+                localStorage.setItem('currentPage', currentPage);
                 updateVisibility();
             }
         });
-
+    
         document.getElementById('nextPage').addEventListener('click', () => {
             if (currentPage < totalPages - 1) {
                 currentPage++;
+                localStorage.setItem('currentPage', currentPage);
                 updateVisibility();
             }
         });
-
+    
         // 初始状态
         updateVisibility();
     </script>
