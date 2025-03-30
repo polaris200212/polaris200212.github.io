@@ -324,12 +324,21 @@
     <script>
         // 分页逻辑
         const pages = document.querySelectorAll('#content .page');
+        const introduction = document.getElementById('introduction');
         const itemsPerPage = 10;
         let currentPage = localStorage.getItem('currentPage') || 0;
         currentPage = parseInt(currentPage);
         const totalPages = Math.ceil(pages.length / itemsPerPage);
         
         function updateVisibility() {
+            // 显示/隐藏前言
+            if (currentPage === 0) {
+                introduction.style.display = 'block';
+            } else {
+                introduction.style.display = 'none';
+            }
+    
+            // 更新页面内容显示
             pages.forEach((page, index) => {
                 const shouldShow = index >= currentPage * itemsPerPage && 
                                  index < (currentPage + 1) * itemsPerPage;
@@ -340,8 +349,19 @@
             document.getElementById('prevPage').disabled = currentPage === 0;
             document.getElementById('nextPage').disabled = currentPage === totalPages - 1;
             
-            // 滚动到顶部
-            window.scrollTo(0, 0);
+            // 滚动控制
+            if (currentPage === 0) {
+                window.scrollTo(0, 0);
+            } else {
+                // 滚动到当前页的第一个可见标题
+                const firstVisiblePage = document.querySelector('#content .page[style="display: block;"]');
+                if (firstVisiblePage) {
+                    const firstHeading = firstVisiblePage.querySelector('h2');
+                    if (firstHeading) {
+                        firstHeading.scrollIntoView();
+                    }
+                }
+            }
         }
     
         // 事件监听
