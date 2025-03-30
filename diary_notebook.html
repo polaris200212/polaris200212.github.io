@@ -5,21 +5,74 @@
     <style>
         body { max-width: 800px; margin: 0 auto; padding: 20px; font-family: -apple-system, sans-serif; }
         .editor { border: 1px solid #e1e4e8; padding: 20px; border-radius: 6px; margin-bottom: 30px; }
-        textarea { width: 100%; height: 100px; padding: 10px; border: 1px solid #d1d5da; margin-bottom: 10px; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #d1d5da; margin-bottom: 10px; }
+        #title { font-size: 1.2em; }
+        textarea { height: 100px; }
         button { background: #2eb886; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
         .timeline { border-left: 2px solid #0366d6; padding-left: 20px; }
-        .entry { position: relative; margin: 20px 0; padding: 15px; border: 1px solid #e1e4e8; border-radius: 6px; }
-        .entry:before { content: ""; position: absolute; left: -26px; top: 50%; width: 12px; height: 12px; background: #0366d6; border-radius: 50%; }
+        .entry { 
+            position: relative; 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #e1e4e8; 
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .entry:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .entry:before { 
+            content: ""; 
+            position: absolute; 
+            left: -26px; 
+            top: 50%; 
+            width: 12px; 
+            height: 12px; 
+            background: #0366d6; 
+            border-radius: 50%; 
+        }
+        .entry-title { 
+            font-size: 1.3em; 
+            font-weight: bold; 
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .entry-content { margin-bottom: 10px; }
+        .meta { 
+            color: #6a737d; 
+            font-size: 0.9em; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .delete-btn { 
+            color: #cb2431; 
+            background: none; 
+            border: none; 
+            cursor: pointer;
+            font-size: 0.8em;
+            padding: 3px 8px;
+            border-radius: 3px;
+        }
+        .delete-btn:hover { background: #ffebeb; }
         .loading { color: #586069; font-style: italic; }
         .error { color: #cb2431; }
         .token-warning { background: #fff8c5; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
+        .confirm-box {
+            background: #f6f8fa;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            text-align: right;
+        }
     </style>
 </head>
 <body>
     <div class="editor">
         <h2>明日日记</h2>
         <div id="tokenStatus" class="token-warning">⚠️ 正在验证GitHub Token...</div>
-        <textarea id="content" placeholder="在此输入明天的计划..."></textarea>
+        <input type="text" id="title" placeholder="日记标题">
+        <textarea id="content" placeholder="在此输入日记内容..."></textarea>
         <button onclick="submitDiary()">永久保存</button>
     </div>
     <div class="timeline" id="timeline"></div>
@@ -27,7 +80,6 @@
     <script>
         // 配置参数
         const REPO = 'polaris200212/polaris200212.github.io';
-        // ⚠️ 重要：按照下面说明获取新Token
         const TOKEN = localStorage.getItem('github_token') || prompt("请输入你的GitHub Token:");
         const DATA_FILE = '_data/diary.json';
 
@@ -51,7 +103,7 @@
 
                 if (!res.ok) {
                     localStorage.removeItem('github_token');
-                    statusEl.innerHTML = '❌ Token无效或已过期<br>请<a href="https://github.com/settings/tokens/new" target="_blank">创建新Token</a>并粘贴到这里:'
+                    statusEl.innerHTML = '❌ Token无效或已过期<br>请<a href="https://github.com/settings/tokens/new" target="_blank">创建新Token</a>并粘贴在这里:'
                         + '<input type="text" id="newToken" style="width:100%;margin:5px 0">'
                         + '<button onclick="updateToken()">更新Token</button>';
                     return false;
@@ -93,9 +145,11 @@
                 return;
             }
 
+            const title = document.getElementById('title').value.trim();
             const content = document.getElementById('content').value.trim();
-            if (!content) {
-                showStatus('请输入日记内容', true);
+            
+            if (!title || !content) {
+                showStatus('请填写标题和内容', true);
                 return;
             }
 
@@ -111,7 +165,9 @@
 
                 // 创建日记对象
                 const newEntry = {
+                    id: Date.now().toString(), // 为每条日记添加唯一ID
                     timestamp: new Date().toISOString(),
+                    title: title,
                     content: content,
                     ip: ip,
                     city: '自动获取中...',
@@ -155,7 +211,7 @@
                         'Accept': 'application/vnd.github.v3+json'
                     },
                     body: JSON.stringify({
-                        message: `添加日记: ${new Date().toLocaleString()}`,
+                        message: `添加日记: ${title}`,
                         content: safeBtoa(JSON.stringify(existingData, null, 2)),
                         sha: sha
                     })
@@ -166,6 +222,7 @@
                     throw new Error(errorData.message || '更新失败');
                 }
 
+                document.getElementById('title').value = '';
                 document.getElementById('content').value = '';
                 showStatus('提交成功！', false);
                 loadDiaries();
@@ -176,6 +233,49 @@
             } finally {
                 btn.disabled = false;
                 btn.textContent = '永久保存';
+            }
+        }
+
+        // 删除日记
+        async function deleteDiary(id) {
+            if (!confirm('确定要删除这条日记吗？')) return;
+            
+            try {
+                showStatus('正在删除...', false);
+                
+                // 获取当前文件
+                const fileRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_FILE}`, {
+                    headers: { 'Authorization': `token ${TOKEN}` }
+                });
+                
+                if (!fileRes.ok) throw new Error('获取数据失败');
+                
+                const fileData = await fileRes.json();
+                let existingData = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+                
+                // 过滤掉要删除的条目
+                const updatedData = existingData.filter(entry => entry.id !== id);
+                
+                // 更新文件
+                const updateRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_FILE}`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Authorization': `token ${TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        message: `删除日记: ${id}`,
+                        content: safeBtoa(JSON.stringify(updatedData, null, 2)),
+                        sha: fileData.sha
+                    })
+                });
+
+                if (!updateRes.ok) throw new Error('删除失败');
+                
+                loadDiaries();
+            } catch (error) {
+                console.error('删除失败:', error);
+                showStatus(`删除失败: ${error.message}`, true);
             }
         }
 
@@ -213,12 +313,18 @@
             }
             
             container.innerHTML = data.reverse().map(entry => `
-                <div class="entry">
-                    <div>${entry.content.replace(/\n/g, '<br>')}</div>
+                <div class="entry" id="entry-${entry.id}">
+                    <div class="entry-title">
+                        <span>${entry.title || '无标题'}</span>
+                        <button class="delete-btn" onclick="deleteDiary('${entry.id}')">删除</button>
+                    </div>
+                    <div class="entry-content">${entry.content.replace(/\n/g, '<br>')}</div>
                     <div class="meta">
-                        📅 ${new Date(entry.timestamp).toLocaleString()} | 
-                        🌐 ${entry.city || '未知地区'} (${entry.country || '未知国家'}) | 
-                        IP: ${entry.ip || '未知'}
+                        <span>
+                            📅 ${new Date(entry.timestamp).toLocaleString()} | 
+                            🌐 ${entry.city || '未知地区'} (${entry.country || '未知国家'}) | 
+                            IP: ${entry.ip || '未知'}
+                        </span>
                     </div>
                 </div>
             `).join('');
