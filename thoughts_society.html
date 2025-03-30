@@ -215,21 +215,21 @@
             </div>
 
             <div class="page">
-                <h2>13. 一只特立独行的猪</h2>
+                <h2>12. 一只特立独行的猪</h2>
                 <p>
                     如果想要讨好所有的人，注定是平庸的命运。当你的见识与见解超过大多数人的时候，你绝对不会是一个很受欢迎的人。你也不可能做着大众认同的事情，还期待着与众不同的结果。
                 </p>
             </div>
 
             <div class="page">
-                <h2>14. 领先的我们，落后的我们</h2>
+                <h2>13. 领先的我们，落后的我们</h2>
                 <p>
                     中国历史原本大幅领先西方，近代以后突然被赶超，中国学生原本大幅领先于西方，但是在大学研究生博士生学者阶段突然落后，这其中存不存在关联？
                 </p>
             </div>
 
             <div class="page">
-                <h2>15. 杂七杂八还没整理的</h2>
+                <h2>14. 杂七杂八还没整理的</h2>
                 <p>
                     
                     人类对自然科学的掌握，比如数学，既不能理解简单如0和1的概念本源，也不能认识多维空间的深奥知识，就像是可见光在光谱中央，可听声在声波谱中一样，只占大千世界微不足道的一小部分。
@@ -249,17 +249,17 @@
             </div>
 
             <div class="page">
-                <h2>16. </h2>
+                <h2>15. </h2>
                 <p>为什么大学同学不如初中同学高中同学亲密？</p>
             </div>
 
             <div class="page">
-                <h2>17. 饭圈文化</h2>
+                <h2>16. 饭圈文化</h2>
                 <p>饭圈文化为什么越来越盛行？</p>
             </div>
 
             <div class="page">
-                <h2>18. 对进化论的质疑</h2>
+                <h2>17. 对进化论的质疑</h2>
                 <p>
                     原始部落的走婚制严格限制血亲走婚，这在现在看来有利于避免遗传病，但当时肯定没有考虑到此类问题，那么原始社会的人们是如何自觉形成这种规定的呢？<hr>
                     为什么蜜蜂进化出了蜇人以后一定要死的形态？为什么不能进化成蛰完人不死？<hr>
@@ -269,12 +269,12 @@
             </div>
 
             <div class="page">
-                <h2>19. 卷文化</h2>
+                <h2>18. 卷文化</h2>
                 <p>为什么东亚文化圈中日韩盛行卷文化？而西方国家并未出现卷的现象？</p>
             </div>
 
             <div class="page">
-                <h2>20. 社会形态问题</h2>
+                <h2>19. 社会形态问题</h2>
                 <p>
                     为什么犹太民族没有被同化而能够复国，为什么希伯来语能够复活而且和两千年前没有变化？<hr>
                     彝族手工业技艺精湛，但是社会形态还停留在早期奴隶社会，用戴蒙德的物种理论能不能解释彝族的落后原因？
@@ -282,13 +282,28 @@
             </div>
 
             <div class="page">
-                <h2>21. 中西社会比较研究</h2>
+                <h2>20. 中西社会比较研究</h2>
                 <p>
                     1942年河南大饥荒，1959年三年自然灾害，中国历朝历代的大灾荒，是制度一直不行，更是中国自然条件的不行。不过西欧也闹过大饥荒。<hr>
                     元明清某些时期生产力远不如唐宋，而西欧中世纪以后生产力是不是一直往上升（除黑死病外）？<hr>
                     中国古代的绘画和古埃及很像。他们不注重真实，更注重象征性。比如古埃及的法老都一个容貌一个表情，中国古代的画像都是丹凤眼卧蚕眉大耳垂<hr>
                     为什么欧洲没有土地兼并的说法，为什么中国古代失去土地的流民不进城？<hr>
                     为什么中国古代不遗余力打击商人，而欧洲并不？
+                </p>
+            </div>
+
+            <div class="page">
+                <h2>21. </h2>
+                <p>
+                    为什么犹太民族没有被同化而能够复国，为什么希伯来语能够复活而且和两千年前没有变化？<hr>
+                    彝族手工业技艺精湛，但是社会形态还停留在早期奴隶社会，用戴蒙德的物种理论能不能解释彝族的落后原因？
+                </p>
+            </div>
+
+            <div class="page">
+                <h2>22. </h2>
+                <p>
+                    
                 </p>
             </div>
             
@@ -311,23 +326,20 @@
         const pages = document.querySelectorAll('#content .page');
         const itemsPerPage = 10;
         let currentPage = 0;
+        const totalPages = Math.ceil(pages.length / itemsPerPage);
         
         function updateVisibility() {
-            // 每次更新时重新计算总页数
-            const totalPages = Math.ceil(pages.length / itemsPerPage);
-            
-            // 显示当前页内容
             pages.forEach((page, index) => {
-                const pageStart = currentPage * itemsPerPage;
-                const pageEnd = pageStart + itemsPerPage;
-                page.style.display = (index >= pageStart && index < pageEnd) ? 'block' : 'none';
+                const shouldShow = index >= currentPage * itemsPerPage && 
+                                 index < (currentPage + 1) * itemsPerPage;
+                page.style.display = shouldShow ? 'block' : 'none';
             });
-        
+
             // 更新按钮状态
-            document.getElementById('prevPage').disabled = currentPage <= 0;
-            document.getElementById('nextPage').disabled = currentPage >= totalPages - 1;
+            document.getElementById('prevPage').disabled = currentPage === 0;
+            document.getElementById('nextPage').disabled = currentPage === totalPages - 1;
         }
-        
+
         // 事件监听
         document.getElementById('prevPage').addEventListener('click', () => {
             if (currentPage > 0) {
@@ -335,15 +347,14 @@
                 updateVisibility();
             }
         });
-        
+
         document.getElementById('nextPage').addEventListener('click', () => {
-            const totalPages = Math.ceil(pages.length / itemsPerPage);
             if (currentPage < totalPages - 1) {
                 currentPage++;
                 updateVisibility();
             }
         });
-        
+
         // 初始状态
         updateVisibility();
     </script>
