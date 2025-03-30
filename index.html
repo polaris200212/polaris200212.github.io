@@ -55,22 +55,60 @@
 					</section>
 
 				<!-- Two -->
-					<section id="two">
-					    <h2>靈犀對談</h2>
-					    <div class="row">
-					        <article class="col-12 work-item">
-					            <h3><a href="articles/20250328_真诚、信任的理性抉择.docx" download>真诚、信任的理性抉择</a></h3>
-					            <p>2025年3月28日</p>
-					        </article>
-					        <article class="col-12 work-item">
-					            <h3><a href="articles/" download></a></h3>
-					            <p>2025年x月x日</p>
-					        </article>
-					    </div>
-					    <ul class="actions">
-					        <li><a href="#" class="button">查看更多文章</a></li>
-					    </ul>
-					</section>
+				<section id="two">
+				    <h2>靈犀對談</h2>
+				    <div class="row">
+				        <article class="col-12 work-item">
+				            <h3><a href="javascript:void(0)" onclick="openWordOnline('articles/20250328_真诚、信任的理性抉择.docx')">真诚、信任的理性抉择</a></h3>
+				            <p>2025年3月28日</p>
+				        </article>
+				        <article class="col-12 work-item">
+				            <h3><a href="javascript:void(0)" onclick="openWordOnline('articles/其他文档.docx')">其他文档标题</a></h3>
+				            <p>2025年x月x日</p>
+				        </article>
+				    </div>
+				    <ul class="actions">
+				        <li><a href="#" class="button">查看更多文章</a></li>
+				    </ul>
+				</section>
+				
+							<!-- 添加Office Online查看器容器（默认隐藏） -->
+							<div id="wordViewerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999;">
+							    <div style="width:90%; height:90%; margin:2% auto; background:#fff; padding:10px;">
+								<button onclick="closeViewer()" style="float:right; background:#f00; color:#fff; border:none; padding:5px 10px;">关闭</button>
+								<iframe id="wordViewerFrame" src="" style="width:100%; height:95%; border:none;"></iframe>
+							    </div>
+							</div>
+							
+							<script>
+							// 打开Word文档在线查看
+							function openWordOnline(docPath) {
+							    // 确保是docx文件
+							    if (!docPath.toLowerCase().endsWith('.docx')) {
+								alert('仅支持.docx格式文档');
+								return;
+							    }
+							    
+							    // 转换为GitHub Raw URL（假设你的文档在仓库根目录的articles文件夹）
+							    const rawUrl = `https://raw.githubusercontent.com/polaris200212/polaris200212.github.io/main/${docPath}`;
+							    
+							    // 微软Office Online查看器URL
+							    const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(rawUrl)}`;
+							    
+							    // 显示模态框并加载文档
+							    document.getElementById('wordViewerFrame').src = viewerUrl;
+							    document.getElementById('wordViewerModal').style.display = 'block';
+							    
+							    // 阻止默认下载行为
+							    return false;
+							}
+							
+							// 关闭查看器
+							function closeViewer() {
+							    document.getElementById('wordViewerModal').style.display = 'none';
+							    document.getElementById('wordViewerFrame').src = '';
+							}
+							</script>
 
 				<!-- Three -->
 					<section id="three">
