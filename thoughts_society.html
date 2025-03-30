@@ -349,19 +349,8 @@
             document.getElementById('prevPage').disabled = currentPage === 0;
             document.getElementById('nextPage').disabled = currentPage === totalPages - 1;
             
-            // 滚动控制
-            if (currentPage === 0) {
-                window.scrollTo(0, 0);
-            } else {
-                // 滚动到当前页的第一个可见标题
-                const firstVisiblePage = document.querySelector('#content .page[style="display: block;"]');
-                if (firstVisiblePage) {
-                    const firstHeading = firstVisiblePage.querySelector('h2');
-                    if (firstHeading) {
-                        firstHeading.scrollIntoView();
-                    }
-                }
-            }
+            // 滚动到顶部
+            window.scrollTo(0, 0);
         }
     
         // 事件监听
