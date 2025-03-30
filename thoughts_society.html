@@ -340,8 +340,9 @@
     
             // 更新页面内容显示
             pages.forEach((page, index) => {
-                page.style.display = (index >= currentPage * itemsPerPage && 
-                                    index < (currentPage + 1) * itemsPerPage) ? 'block' : 'none';
+                const shouldShow = index >= currentPage * itemsPerPage && 
+                                 index < (currentPage + 1) * itemsPerPage;
+                page.style.display = shouldShow ? 'block' : 'none';
             });
     
             // 更新按钮状态
@@ -349,29 +350,17 @@
             document.getElementById('nextPage').disabled = currentPage === totalPages - 1;
             
             // 滚动到顶部
-            scrollToTop();
+            window.scrollTo(0, 0);
         }
 
-        // 检测是否从其他页面跳转而来
-        function isNavigationFromOtherPage() {
-            return performance.navigation.type === performance.navigation.TYPE_NAVIGATE ||
-                   performance.navigation.type === performance.navigation.TYPE_RELOAD;
-        }
-
-        // 页面加载时处理
+        // 页面刷新时回到顶部
         window.addEventListener('load', function() {
-            // 如果是从其他页面跳转而来，重置为第一页
-            if (isNavigationFromOtherPage()) {
-                currentPage = 0;
-                sessionStorage.removeItem('currentPage');
-            } else {
-                // 否则尝试读取保存的页码
-                const savedPage = sessionStorage.getItem('currentPage');
-                if (savedPage !== null) {
-                    currentPage = parseInt(savedPage);
-                }
+            // 从localStorage读取当前页
+            const savedPage = localStorage.getItem('currentPage');
+            if (savedPage) {
+                currentPage = parseInt(savedPage);
             }
-            updateVisibility();
+            updateVisibility(true);
         });
         
         // 事件监听
