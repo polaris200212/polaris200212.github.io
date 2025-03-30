@@ -353,9 +353,14 @@
             window.scrollTo(0, 0);
         }
 
-        // 页面加载时强制滚动到顶部
+        // 页面刷新时回到顶部
         window.addEventListener('load', function() {
-            window.scrollTo(0, 0);
+            // 从localStorage读取当前页
+            const savedPage = localStorage.getItem('currentPage');
+            if (savedPage) {
+                currentPage = parseInt(savedPage);
+            }
+            updateVisibility(true);
         });
         
         // 事件监听
