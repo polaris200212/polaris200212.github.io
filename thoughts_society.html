@@ -352,7 +352,12 @@
             // 滚动到顶部
             window.scrollTo(0, 0);
         }
-    
+
+        // 页面加载时强制滚动到顶部
+        window.addEventListener('load', function() {
+            window.scrollTo(0, 0);
+        });
+        
         // 事件监听
         document.getElementById('prevPage').addEventListener('click', () => {
             if (currentPage > 0) {
