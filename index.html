@@ -174,11 +174,8 @@
 							    // 转换为GitHub Raw URL（假设你的文档在仓库根目录的articles文件夹）
 							    const rawUrl = `https://raw.githubusercontent.com/polaris200212/polaris200212.github.io/main/${pdfPath}`;
 							    
-							    // Google Docs Viewer URL
-							    const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(rawUrl)}&embedded=true`;
-							    
-							    // 显示模态框并加载文档
-							    document.getElementById('pdfViewerFrame').src = viewerUrl;
+							    // 显示模态框并加载PDF文件
+							    document.getElementById('pdfViewerFrame').src = rawUrl;
 							    document.getElementById('pdfViewerModal').style.display = 'block';
 							    
 							    // 阻止默认下载行为
