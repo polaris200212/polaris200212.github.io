@@ -91,9 +91,9 @@
 					    
 				        <article class="col-12 work-item">
 				            <h3>
-						    马原期末论文：对剩余价值产生机制和“劳动力商品”特殊性的思考
-						    <a href="javascript:void(0)" onclick="openWordOnline('articles/马原期末论文：对剩余价值产生机制和“劳动力商品”特殊性的思考.docx')">论文</a>
-						    <a href="javascript:void(0)" onclick="openWordOnline('articles/马原期末论文汇报ppt：对剩余价值产生机制和“劳动力商品”特殊性的思考.pdf')">PPT</a>
+						    马原期末论文：对剩余价值产生机制和“劳动力商品”特殊性的思考 <p> </p>
+						    <a href="javascript:void(0)" onclick="openWordOnline('articles/马原期末论文：对剩余价值产生机制和“劳动力商品”特殊性的思考.docx')">论文</a> <p> </p>
+						    <a href="javascript:void(0)" onclick="openPdfOnline('articles/马原期末论文汇报ppt：对剩余价值产生机制和“劳动力商品”特殊性的思考.pdf')">PPT</a>
 					    </h3>
 				            <p>有关劳动力作为一种有别于普通商品的“特殊商品”的问题</p>
 				        </article>
@@ -113,6 +113,7 @@
 				        <li><a href="#" class="button">查看更多</a></li>
 				    </ul>
 				</section>
+
 				
 							<!-- 添加Office Online查看器容器（默认隐藏） -->
 							<div id="wordViewerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999;">
@@ -152,6 +153,46 @@
 							}
 							</script>
 
+				
+							<!-- 添加PDF查看器容器（默认隐藏） -->
+							<div id="pdfViewerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999;">
+							    <div style="width:90%; height:90%; margin:2% auto; background:#fff; padding:10px;">
+							        <button onclick="closePdfViewer()" style="float:right; background:#f00; color:#fff; border:none; padding:5px 10px;">关闭</button>
+							        <iframe id="pdfViewerFrame" src="" style="width:100%; height:95%; border:none;"></iframe>
+							    </div>
+							</div>
+							
+							<script>
+							// 打开PDF文档在线查看
+							function openPdfOnline(pdfPath) {
+							    // 确保是pdf文件
+							    if (!pdfPath.toLowerCase().endsWith('.pdf')) {
+							        alert('仅支持.pdf格式文档');
+							        return;
+							    }
+							    
+							    // 转换为GitHub Raw URL（假设你的文档在仓库根目录的articles文件夹）
+							    const rawUrl = `https://raw.githubusercontent.com/polaris200212/polaris200212.github.io/main/${pdfPath}`;
+							    
+							    // Google Docs Viewer URL
+							    const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(rawUrl)}&embedded=true`;
+							    
+							    // 显示模态框并加载文档
+							    document.getElementById('pdfViewerFrame').src = viewerUrl;
+							    document.getElementById('pdfViewerModal').style.display = 'block';
+							    
+							    // 阻止默认下载行为
+							    return false;
+							}
+							
+							// 关闭PDF查看器
+							function closePdfViewer() {
+							    document.getElementById('pdfViewerModal').style.display = 'none';
+							    document.getElementById('pdfViewerFrame').src = '';
+							}
+							</script>
+
+				
 				<!-- Four -->
 					<section id="four">
 					    <h2>思海拾貝</h2>
