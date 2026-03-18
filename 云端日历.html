@@ -169,6 +169,8 @@
     const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/69ba4b0ec3097a1dd53620c3'; 
     const JSONBIN_KEY = '$2a$10$GCrQCNUFS44yX079OORaqO4gAlyI9qJK9Z/X1hqrQTj8nJFNNyS5y';
     const LOCAL_CACHE_KEY = 'morandi_calendar_data';
+    const SYNC_TIME_KEY = 'morandi_last_sync_time'; // 新增：记录上次同步的时间戳
+    const COOLDOWN_MINUTES = 60; // 新增：设定冷却时间为 60 分钟（这段时间内刷新不扣次数）
     // ==========================================
 
     let appData = { dates: {}, backlog: [] };
@@ -178,7 +180,6 @@
     const grid = document.getElementById('calendar-grid');
     const loadingTip = document.getElementById('loading-tip');
 
-    // UI 提示函数
     function showTip(text, isError = false) {
         loadingTip.style.display = 'inline-block';
         loadingTip.textContent = text;
@@ -189,10 +190,9 @@
     }
 
     // ==========================================
-    // 核心重构：本地优先 + 自动静默防覆盖
+    // 核心重构：本地优先 + 智能冷却防消耗
     // ==========================================
 
-    // 1. 初始化：秒读本地 + 后台静默查岗
     function initData() {
         const localData = localStorage.getItem(LOCAL_CACHE_KEY);
         if (localData) {
@@ -200,15 +200,21 @@
             renderCalendar();
             renderBacklog();
             
-            // 本地数据加载完毕后，立刻在后台去云端对比一下，防止你忘了刷新
-            silentCloudCheck();
+            // 检查距离上次同步过去了多久
+            const lastSync = localStorage.getItem(SYNC_TIME_KEY) || 0;
+            const now = new Date().getTime();
+            const minutesPassed = (now - lastSync) / (1000 * 60);
+
+            if (minutesPassed > COOLDOWN_MINUTES) {
+                silentCloudCheck(); // 超过60分钟，查一次岗
+            } else {
+                console.log(`[智能冷却中] 距离上次同步仅过 ${Math.round(minutesPassed)} 分钟，本次刷新完全免费，不消耗云端次数！`);
+            }
         } else {
-            // 如果本地完全空了（新电脑），才强制出现下载提示
             forceCloudSync();
         }
     }
 
-    // 2. 强制云同步（点按钮或首次使用触发）
     async function forceCloudSync() {
         showTip("☁️ 正在从云端下载...");
         try {
@@ -216,11 +222,10 @@
             const data = await response.json();
             const rawData = data.record || {};
             
-            // 兼容空数据结构
             appData = (!rawData.dates && !rawData.backlog) ? { dates: rawData, backlog: [] } : rawData;
             
-            // 覆盖本地缓存
             localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(appData));
+            localStorage.setItem(SYNC_TIME_KEY, new Date().getTime()); // 更新最后同步时间
             showTip("✅ 下载完成，数据已更新");
         } catch (error) {
             showTip("❌ 下载失败，请检查网络", true);
@@ -231,36 +236,33 @@
         }
     }
 
-    // 3. 静默检查云端更新的“暗中保护”机制
     async function silentCloudCheck() {
         try {
             const response = await fetch(JSONBIN_URL, { headers: { 'X-Access-Key': JSONBIN_KEY } });
             const data = await response.json();
             const cloudData = data.record || {};
             
-            // 把本地数据和云端数据转成字符串，看看有没有区别
             if (JSON.stringify(cloudData) !== JSON.stringify(appData)) {
-                // 如果发现不一样，说明你在别的电脑改过，立刻用云端覆盖本地
                 appData = cloudData;
                 localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(appData));
                 renderCalendar();
                 renderBacklog();
                 
-                // 给个安心的小提示
                 showTip("✨ 发现新数据，已自动为您同步！");
                 hideTip(3000); 
             }
+            // 只要成功查岗，就重新开始冷却倒计时
+            localStorage.setItem(SYNC_TIME_KEY, new Date().getTime());
         } catch (error) {
             console.log("后台检查网络波动，暂时使用本地数据");
         }
     }
 
-    // 4. 混合保存：秒存本地 + 静默上传云端
     async function saveToBoth() {
-        // 第一步：瞬间存入浏览器缓存（无需等待网络）
+        // 第一步：瞬间存入浏览器缓存
         localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(appData));
         
-        // 第二步：在后台悄悄同步给 JSONBin
+        // 第二步：备份到云端
         showTip("☁️ 正在备份到云端...");
         try {
             await fetch(JSONBIN_URL, {
@@ -268,6 +270,7 @@
                 headers: { 'Content-Type': 'application/json', 'X-Access-Key': JSONBIN_KEY },
                 body: JSON.stringify(appData)
             });
+            localStorage.setItem(SYNC_TIME_KEY, new Date().getTime()); // 写入成功也重置冷却时间
             showTip("✅ 云端已同步");
         } catch (error) {
             showTip("❌ 云端同步失败，但已保存在本地", true);
