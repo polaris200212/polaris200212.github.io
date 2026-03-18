@@ -1203,4 +1203,16 @@ function openPdfViewer(pdfPath) {
 }
 function closePdfViewer() {
     document.getElementById("pdfModal").classList.remove("active");
-    document.getElementB
+    document.getElementById("pdfFrame").src = "";
+}
+
+/* 點擊遮罩背景關閉 Modal */
+["wordModal", "pdfModal"].forEach(id => {
+    document.getElementById(id).addEventListener("click", function(e) {
+        if (e.target === this) id === "wordModal" ? closeWordViewer() : closePdfViewer();
+    });
+});
+</script>
+
+</body>
+</html>
