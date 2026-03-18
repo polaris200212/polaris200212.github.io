@@ -1,0 +1,1206 @@
+<!DOCTYPE HTML>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>趙東逸 Elliott Zhao · Peking University</title>
+
+    <!-- ══════════════════════════════════════
+         字體引入
+         英文：Times New Roman（系統）
+         中文：Noto Serif TC（繁體宋體）
+    ══════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+
+    /* ══════════════════════════════════════
+       一、CSS 變量
+       取色自莫內《印象·日出》
+       主色系低飽和，暖橘僅作點綴
+    ══════════════════════════════════════ */
+    :root {
+        /* 莫內畫作色票 */
+        --monet-teal:      #465C5A;   /* 深藍灰綠 — 主文字、標題 */
+        --monet-blue:      #6789A0;   /* 霧藍 — 主要連結、accent */
+        --monet-sage:      #6F8B86;   /* 鼠尾草青 — 副標題、nav */
+        --monet-stone:     #B0B5AD;   /* 石灰綠灰 — 邊框、分割線 */
+        --monet-sand:      #AA9C83;   /* 溫砂 — 極淡背景色塊 */
+        --monet-amber:     #D39454;   /* 暖橘金 — 僅用於超小點綴 */
+
+        /* 基礎 */
+        --bg:              #ffffff;
+        --bg-warm:         #faf9f7;   /* 極淺暖白，側欄底色 */
+        --ink:             #1e2a2a;   /* 近黑偏青，主文字 */
+        --ink-mid:         #3a4f4d;   /* 中調 */
+        --ink-light:       #7a8f8c;   /* 淺調 */
+
+        /* 邊框 */
+        --rule:            #dde2df;   /* 分割線 */
+        --rule-strong:     #b8c4c2;
+
+        /* 圓角 */
+        --r:               10px;
+        --r-sm:            6px;
+
+        /* 柔和陰影 */
+        --sh:              0 2px 20px rgba(70,92,90,0.08);
+        --sh-hover:        0 4px 32px rgba(70,92,90,0.13);
+
+        /* 字體 */
+        --font-en:  'Times New Roman', Times, serif;
+        --font-zh:  'Noto Serif TC', serif;
+
+        /* 佈局 */
+        --sidebar-w:  280px;
+        --content-w:  780px;
+        --wrap-max:   1160px;
+    }
+
+    /* ══════════════════════════════════════
+       二、全域重置
+    ══════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font-zh);
+        font-size: 18.5px;
+        font-weight: 400;
+        line-height: 1.85;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* 英文元素統一 Times New Roman */
+    h1, .en, .nav-en, .section-label, .item-meta,
+    .contact-label, .contact-value, .contact-intro,
+    .sidebar-links a, .footer-copy,
+    input, textarea, button { font-family: var(--font-en); }
+
+
+    /* ══════════════════════════════════════
+       三、密碼驗證遮罩
+    ══════════════════════════════════════ */
+    #authOverlay {
+        position: fixed; inset: 0;
+        background: var(--bg);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .auth-box {
+        width: 380px;
+        text-align: center;
+        padding: 3.5rem 3rem;
+        border-top: 3px solid var(--monet-teal);
+        border-bottom: 1px solid var(--rule);
+    }
+    .auth-name-zh {
+        font-family: var(--font-zh);
+        font-size: 1.4rem; font-weight: 600;
+        letter-spacing: 0.2em;
+        color: var(--monet-teal);
+        margin-bottom: 0.2rem;
+    }
+    .auth-name-en {
+        font-size: 0.85rem;
+        color: var(--ink-light);
+        letter-spacing: 0.1em;
+        margin-bottom: 2rem;
+    }
+    .auth-box input[type="password"] {
+        width: 100%; padding: 0.75rem 1rem;
+        background: var(--bg-warm);
+        border: 1px solid var(--rule-strong);
+        border-radius: var(--r-sm);
+        color: var(--ink);
+        font-family: var(--font-en);
+        font-size: 1rem; outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        margin-bottom: 0.9rem; display: block;
+    }
+    .auth-box input:focus {
+        border-color: var(--monet-blue);
+        box-shadow: 0 0 0 3px rgba(103,137,160,0.15);
+    }
+    .auth-box button {
+        width: 100%; padding: 0.75rem 0;
+        background: var(--monet-teal); color: #fff;
+        border: none; border-radius: var(--r-sm);
+        font-size: 0.88rem; letter-spacing: 0.12em;
+        cursor: pointer; transition: background 0.2s;
+    }
+    .auth-box button:hover { background: var(--monet-sage); }
+    .auth-error {
+        color: var(--monet-amber);
+        font-family: var(--font-zh);
+        font-size: 0.88rem;
+        margin-top: 0.8rem; display: none;
+    }
+
+
+    /* ══════════════════════════════════════
+       四、全站導航欄（頂部）
+       仿 Goldman Sachs / WTO 風格
+    ══════════════════════════════════════ */
+    #topnav {
+        position: sticky; top: 0; z-index: 100;
+        background: var(--monet-teal);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .topnav-inner {
+        max-width: var(--wrap-max);
+        margin: 0 auto;
+        padding: 0 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 52px;
+    }
+    .topnav-logo {
+        font-family: var(--font-zh);
+        font-size: 1rem; font-weight: 600;
+        letter-spacing: 0.12em;
+        color: rgba(255,255,255,0.95);
+    }
+    .topnav-logo span {
+        font-family: var(--font-en);
+        font-size: 0.78rem;
+        font-weight: 400;
+        opacity: 0.65;
+        margin-left: 0.7rem;
+        letter-spacing: 0.06em;
+    }
+    .topnav-links {
+        display: flex; gap: 0; list-style: none;
+    }
+    .topnav-links a {
+        font-family: var(--font-zh);
+        font-size: 0.82rem;
+        letter-spacing: 0.08em;
+        color: rgba(255,255,255,0.72);
+        padding: 0 1.1rem;
+        height: 52px;
+        display: flex; align-items: center;
+        border-bottom: 2px solid transparent;
+        transition: color 0.18s, border-color 0.18s;
+    }
+    .topnav-links a:hover {
+        color: #fff;
+        border-bottom-color: var(--monet-amber);
+    }
+
+
+    /* ══════════════════════════════════════
+       五、Hero 橫幅模組
+       以莫內風格畫作為背景，文字疊加其上
+       左右充滿視口寬度
+    ══════════════════════════════════════ */
+    #hero {
+        position: relative;
+        width: 100%;
+        height: 420px;
+        overflow: hidden;
+    }
+    .hero-painting {
+        position: absolute; inset: 0;
+        /* 莫內《印象·日出》風格的海港晨霧景 */
+        background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80&auto=format');
+        background-size: cover;
+        background-position: center 35%;
+        /* 降彩使之更接近莫內畫作色調 */
+        filter: saturate(0.45) brightness(0.82) sepia(0.15);
+    }
+    /* 漸層遮罩：左側較深（文字區），右側略透 */
+    .hero-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(
+            100deg,
+            rgba(30,42,42,0.80) 0%,
+            rgba(30,42,42,0.55) 45%,
+            rgba(30,42,42,0.20) 100%
+        );
+    }
+    .hero-content {
+        position: relative; z-index: 2;
+        max-width: var(--wrap-max);
+        margin: 0 auto;
+        padding: 0 2.5rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .hero-name-zh {
+        font-family: var(--font-zh);
+        font-size: 0.95rem;
+        letter-spacing: 0.35em;
+        color: rgba(255,255,255,0.65);
+        margin-bottom: 0.5rem;
+        font-weight: 300;
+    }
+    .hero-name-en {
+        font-family: var(--font-en);
+        font-size: 3.2rem;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1.1;
+        margin-bottom: 0.7rem;
+        letter-spacing: 0.01em;
+    }
+    /* Elliott 以莫內橘金色高亮 */
+    .hero-name-en .highlight { color: #e8b87a; }
+    .hero-affil {
+        font-family: var(--font-en);
+        font-size: 1rem;
+        color: rgba(255,255,255,0.65);
+        font-style: italic;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.02em;
+    }
+    .hero-tagline {
+        font-family: var(--font-zh);
+        font-size: 0.95rem;
+        color: rgba(255,255,255,0.50);
+        margin-bottom: 1.8rem;
+    }
+    /* Hero 底部連結列 */
+    .hero-links { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+    .hero-links a {
+        font-family: var(--font-en);
+        font-size: 0.82rem; letter-spacing: 0.09em;
+        padding: 0.42rem 1.1rem;
+        border: 1px solid rgba(255,255,255,0.45);
+        color: rgba(255,255,255,0.85);
+        border-radius: var(--r-sm);
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: blur(4px);
+        transition: background 0.2s, border-color 0.2s;
+    }
+    .hero-links a:hover {
+        background: rgba(255,255,255,0.18);
+        border-color: rgba(255,255,255,0.85);
+        color: #fff;
+    }
+    .hero-links a.zh { font-family: var(--font-zh); font-size: 0.85rem; }
+    /* 頭像浮於 Hero 右側 */
+    .hero-avatar {
+        position: absolute;
+        right: 8%;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 3;
+    }
+    .hero-avatar img {
+        width: 140px; height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(255,255,255,0.4);
+        box-shadow: 0 6px 30px rgba(0,0,0,0.3);
+        filter: saturate(0.65);
+    }
+
+
+    /* ══════════════════════════════════════
+       六、主體雙欄佈局
+       左側欄：固定導航 + 精煉簡歷信息
+       右側欄：全部內容區塊
+    ══════════════════════════════════════ */
+    #bodyWrap {
+        max-width: var(--wrap-max);
+        margin: 0 auto;
+        padding: 0 2.5rem;
+        display: grid;
+        grid-template-columns: var(--sidebar-w) 1fr;
+        gap: 0;
+        align-items: start;
+    }
+
+
+    /* ══════════════════════════════════════
+       七、左側欄模組
+       背景為極淺暖白，與主區白底區分
+       黏性定位跟隨滾動
+    ══════════════════════════════════════ */
+    #sidebar {
+        position: sticky;
+        top: 52px;       /* 緊貼 topnav 底部 */
+        min-height: calc(100vh - 52px);
+        padding: 3rem 2rem 3rem 0;
+        border-right: 1px solid var(--rule);
+        background: var(--bg);
+    }
+
+    /* 側欄節導航 */
+    .sidebar-nav { margin-bottom: 2.5rem; }
+    .sidebar-nav-title {
+        font-family: var(--font-en);
+        font-size: 0.7rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--monet-stone);
+        margin-bottom: 0.8rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--rule);
+    }
+    .sidebar-nav ul { list-style: none; }
+    .sidebar-nav li { border-bottom: 1px solid var(--rule); }
+    .sidebar-nav a {
+        font-family: var(--font-zh);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.65rem 0;
+        font-size: 0.93rem;
+        color: var(--ink-mid);
+        transition: color 0.16s, padding-left 0.16s;
+    }
+    .sidebar-nav a::before {
+        content: '';
+        display: block;
+        width: 4px; height: 4px;
+        border-radius: 50%;
+        background: var(--monet-stone);
+        flex-shrink: 0;
+        transition: background 0.16s;
+    }
+    .sidebar-nav a:hover {
+        color: var(--monet-teal);
+        padding-left: 4px;
+    }
+    .sidebar-nav a:hover::before { background: var(--monet-amber); }
+
+    /* 側欄聯絡信息 */
+    .sidebar-info { margin-top: 2rem; }
+    .sidebar-info-title {
+        font-family: var(--font-en);
+        font-size: 0.7rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--monet-stone);
+        margin-bottom: 0.8rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--rule);
+    }
+    .sidebar-info-row {
+        display: flex; flex-direction: column;
+        margin-bottom: 0.9rem;
+    }
+    .sidebar-info-row .label {
+        font-family: var(--font-en);
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--monet-stone);
+        margin-bottom: 0.1rem;
+    }
+    .sidebar-info-row .value {
+        font-family: var(--font-en);
+        font-size: 0.88rem;
+        color: var(--ink-mid);
+        line-height: 1.55;
+    }
+    .sidebar-info-row .value a { color: var(--monet-blue); }
+    .sidebar-info-row .value a:hover { text-decoration: underline; }
+
+    /* 側欄連結按鈕 */
+    .sidebar-links {
+        display: flex; flex-direction: column;
+        gap: 0.5rem; margin-top: 1.5rem;
+    }
+    .sidebar-links a {
+        font-size: 0.82rem;
+        letter-spacing: 0.07em;
+        padding: 0.5rem 0.8rem;
+        border: 1px solid var(--rule-strong);
+        color: var(--monet-teal);
+        border-radius: var(--r-sm);
+        text-align: center;
+        transition: background 0.18s, color 0.18s, border-color 0.18s;
+    }
+    .sidebar-links a:hover {
+        background: var(--monet-teal); color: #fff;
+        border-color: var(--monet-teal);
+    }
+    .sidebar-links a.zh { font-family: var(--font-zh); font-size: 0.85rem; }
+
+
+    /* ══════════════════════════════════════
+       八、右側主內容區模組
+       純白底、無卡片、以分割線和間距分區
+    ══════════════════════════════════════ */
+    #mainContent {
+        padding: 3.5rem 0 4rem 3.5rem;
+        min-width: 0;   /* 防止 grid 溢出 */
+    }
+
+    /* 通用區塊容器 */
+    .content-section { margin-bottom: 4rem; }
+
+    /* 區塊標題行 */
+    .section-heading {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid var(--monet-teal);
+    }
+    .section-heading h2 {
+        font-family: var(--font-zh);
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        color: var(--monet-teal);
+    }
+    .section-heading .section-label {
+        font-size: 0.78rem;
+        color: var(--ink-light);
+        letter-spacing: 0.1em;
+        font-style: italic;
+    }
+
+
+    /* ══════════════════════════════════════
+       九、引言模組
+       乾淨白底，只以左側色條區分
+    ══════════════════════════════════════ */
+    .intro-quote {
+        padding: 1.5rem 1.8rem;
+        border-left: 3px solid var(--monet-sage);
+        margin-bottom: 0.5rem;
+        background: var(--bg);
+    }
+    .intro-quote p {
+        font-size: 1.02rem;
+        line-height: 2.1;
+        color: var(--ink-mid);
+    }
+    .intro-motto {
+        margin-top: 1.2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--rule);
+        font-size: 0.92rem;
+        color: var(--ink-light);
+    }
+    .intro-motto .en {
+        font-family: var(--font-en);
+        font-style: italic; display: block;
+        margin-top: 0.25rem;
+        font-size: 0.88rem;
+    }
+
+
+    /* ══════════════════════════════════════
+       十、條目列表（通用）
+       極簡橫排，以細分割線分隔
+    ══════════════════════════════════════ */
+    .item-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--rule);
+        position: relative;
+        transition: background 0.14s;
+    }
+    .item-row:last-child { border-bottom: none; }
+    .item-row:first-child { border-top: 1px solid var(--rule); }
+
+    /* hover 時左側顯示暖橘細線 */
+    .item-row::before {
+        content: '';
+        position: absolute;
+        left: -1.5rem; top: 0; bottom: 0;
+        width: 2px;
+        background: transparent;
+        transition: background 0.14s;
+    }
+    .item-row:hover::before { background: var(--monet-amber); }
+
+    .item-title-zh {
+        font-family: var(--font-zh);
+        font-size: 1rem; color: var(--ink); flex: 1;
+    }
+    .item-title-zh a {
+        color: var(--ink);
+        transition: color 0.15s;
+        border-bottom: 1px solid transparent;
+        padding-bottom: 1px;
+    }
+    .item-title-zh a:hover {
+        color: var(--monet-blue);
+        border-bottom-color: var(--monet-blue);
+    }
+
+    .item-date {
+        font-size: 0.82rem; color: var(--ink-light);
+        white-space: nowrap; margin-left: 1.5rem;
+        font-style: italic;
+    }
+    .item-note {
+        font-family: var(--font-zh);
+        font-size: 0.86rem; color: var(--ink-light);
+        margin-top: 0.25rem; font-style: italic;
+    }
+
+    /* 縱向條目（含論文 + PPT 雙連結） */
+    .item-row.stacked {
+        flex-direction: column; align-items: flex-start;
+    }
+    .item-row.stacked .item-date { margin-left: 0; margin-top: 0.2rem; }
+
+    .item-doc-links { display: flex; gap: 0.55rem; margin-top: 0.55rem; }
+    .item-doc-links a {
+        font-family: var(--font-en);
+        font-size: 0.78rem; letter-spacing: 0.06em;
+        padding: 0.22rem 0.75rem;
+        border: 1px solid var(--monet-sage);
+        color: var(--monet-sage);
+        border-radius: var(--r-sm);
+        transition: background 0.16s, color 0.16s;
+    }
+    .item-doc-links a:hover {
+        background: var(--monet-teal); color: #fff;
+        border-color: var(--monet-teal);
+    }
+
+
+    /* ══════════════════════════════════════
+       十一、聯絡模組
+    ══════════════════════════════════════ */
+    .contact-intro {
+        font-family: var(--font-en);
+        font-size: 0.95rem; font-style: italic;
+        color: var(--ink-mid);
+        margin-bottom: 2rem; line-height: 1.8;
+    }
+    .contact-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 3rem;
+    }
+    .contact-form input,
+    .contact-form textarea {
+        display: block; width: 100%;
+        padding: 0.7rem 0.9rem;
+        background: var(--bg);
+        border: 1px solid var(--rule-strong);
+        border-radius: var(--r-sm);
+        color: var(--ink);
+        font-family: var(--font-en); font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.18s, box-shadow 0.18s;
+        margin-bottom: 0.85rem; resize: vertical;
+    }
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+        border-color: var(--monet-blue);
+        box-shadow: 0 0 0 3px rgba(103,137,160,0.12);
+    }
+    .contact-form button {
+        padding: 0.7rem 2rem;
+        background: var(--monet-teal); color: #fff;
+        border: none; border-radius: var(--r-sm);
+        font-size: 0.88rem; letter-spacing: 0.08em;
+        cursor: pointer; transition: background 0.18s;
+    }
+    .contact-form button:hover { background: var(--monet-sage); }
+    .contact-info { display: flex; flex-direction: column; gap: 1.4rem; }
+    .c-row { display: flex; flex-direction: column; gap: 0.15rem; }
+    .contact-label {
+        font-size: 0.7rem; letter-spacing: 0.14em;
+        text-transform: uppercase; color: var(--monet-stone);
+    }
+    .contact-value {
+        font-size: 0.95rem; color: var(--ink-mid); line-height: 1.6;
+    }
+    .contact-value a { color: var(--monet-blue); }
+    .contact-value a:hover { text-decoration: underline; }
+
+
+    /* ══════════════════════════════════════
+       十二、頁腳
+    ══════════════════════════════════════ */
+    #footer {
+        background: var(--monet-teal);
+        color: rgba(255,255,255,0.65);
+        padding: 2rem 2.5rem;
+    }
+    .footer-inner {
+        max-width: var(--wrap-max);
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .footer-copy {
+        font-size: 0.82rem;
+        letter-spacing: 0.04em;
+    }
+    .footer-copy a { color: rgba(255,255,255,0.5); }
+    .footer-copy a:hover { color: #fff; }
+    /* 莫內調色條：畫作五色 */
+    .footer-palette {
+        display: flex; gap: 5px; align-items: center;
+    }
+    .footer-palette span {
+        display: block; width: 26px; height: 5px;
+        border-radius: 3px; opacity: 0.75;
+    }
+
+
+    /* ══════════════════════════════════════
+       十三、文件查看器 Modal
+    ══════════════════════════════════════ */
+    .doc-modal {
+        display: none; position: fixed; inset: 0;
+        background: rgba(20,30,28,0.65);
+        z-index: 8888;
+        align-items: center; justify-content: center;
+        backdrop-filter: blur(4px);
+    }
+    .doc-modal.active { display: flex; }
+    .modal-inner {
+        width: 92%; height: 90vh;
+        background: var(--bg);
+        border-radius: var(--r);
+        display: flex; flex-direction: column;
+        box-shadow: 0 12px 60px rgba(0,0,0,0.22);
+        overflow: hidden;
+    }
+    .modal-toolbar {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 0.75rem 1.4rem;
+        border-bottom: 1px solid var(--rule);
+        background: var(--bg-warm);
+    }
+    .modal-label {
+        font-family: var(--font-en);
+        font-size: 0.8rem; letter-spacing: 0.08em;
+        color: var(--ink-light);
+    }
+    .modal-close {
+        font-family: var(--font-en);
+        font-size: 0.82rem; letter-spacing: 0.06em;
+        color: var(--ink-mid); background: transparent;
+        border: 1px solid var(--rule-strong);
+        border-radius: var(--r-sm);
+        padding: 0.3rem 0.9rem; cursor: pointer;
+        transition: background 0.16s, color 0.16s;
+    }
+    .modal-close:hover { background: var(--monet-teal); color: #fff; border-color: var(--monet-teal); }
+    .modal-frame { flex: 1; border: none; width: 100%; }
+
+
+    /* ══════════════════════════════════════
+       十四、載入動畫
+    ══════════════════════════════════════ */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    #hero, #bodyWrap, #footer {
+        animation: fadeUp 0.55s cubic-bezier(0.22,0.61,0.36,1) both;
+    }
+    #hero      { animation-delay: 0.04s; }
+    #bodyWrap  { animation-delay: 0.14s; }
+    #footer    { animation-delay: 0.22s; }
+
+    .content-section {
+        animation: fadeUp 0.5s cubic-bezier(0.22,0.61,0.36,1) both;
+    }
+    .content-section:nth-child(1) { animation-delay: 0.20s; }
+    .content-section:nth-child(2) { animation-delay: 0.28s; }
+    .content-section:nth-child(3) { animation-delay: 0.36s; }
+    .content-section:nth-child(4) { animation-delay: 0.44s; }
+    .content-section:nth-child(5) { animation-delay: 0.52s; }
+
+
+    /* ══════════════════════════════════════
+       十五、響應式佈局
+    ══════════════════════════════════════ */
+    @media (max-width: 860px) {
+        #bodyWrap {
+            grid-template-columns: 1fr;
+            padding: 0 1.5rem;
+        }
+        #sidebar {
+            position: static;
+            min-height: unset;
+            border-right: none;
+            border-bottom: 1px solid var(--rule);
+            padding: 2rem 0;
+        }
+        #mainContent { padding: 2.5rem 0 3rem; }
+        .hero-avatar { display: none; }
+        .hero-name-en { font-size: 2.2rem; }
+        .contact-grid { grid-template-columns: 1fr; }
+        .topnav-links { display: none; }
+    }
+
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     密碼驗證遮罩
+══════════════════════════════════════════════════════ -->
+<div id="authOverlay">
+    <div class="auth-box">
+        <p class="auth-name-zh">趙 東 逸</p>
+        <p class="auth-name-en">Elliott Zhao · Personal Site</p>
+        <input type="password" id="passwordInput"
+               placeholder="Enter password"
+               onkeydown="if(event.key==='Enter') checkPassword()" />
+        <button onclick="checkPassword()">Enter</button>
+        <p id="authError" class="auth-error">密碼錯誤，請重試</p>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     主頁面（通過驗證後顯示）
+══════════════════════════════════════════════════════ -->
+<div id="pageWrap" style="display:none;">
+
+    <!-- ──────────────────────────────────────────────
+         頂部導航欄
+    ────────────────────────────────────────────── -->
+    <nav id="topnav">
+        <div class="topnav-inner">
+            <div class="topnav-logo">
+                趙東逸
+                <span>Elliott Zhao · Peking University</span>
+            </div>
+            <ul class="topnav-links">
+                <li><a href="#section-contact">聯絡</a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <!-- ──────────────────────────────────────────────
+         Hero 橫幅：油畫風景圖背景 + 個人信息
+    ────────────────────────────────────────────── -->
+    <section id="hero">
+        <div class="hero-painting"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <p class="hero-name-zh">趙 東 逸</p>
+            <h1 class="hero-name-en">
+                <span class="highlight">Elliott</span> Zhao Dongyi
+            </h1>
+            <p class="hero-affil">
+                Economics · National School of Development, Peking University
+            </p>
+            <p class="hero-tagline">熱愛經濟學，思辨於理性與人文之間。</p>
+            <div class="hero-links">
+                <a href="cv.html" target="_blank">Curriculum Vitae</a>
+                <a href="云端日历.html" target="_blank" class="zh">雲端日曆</a>
+            </div>
+        </div>
+        <div class="hero-avatar">
+            <img src="images/photo.jpg" alt="趙東逸 Elliott Zhao" />
+        </div>
+    </section>
+
+
+    <!-- ──────────────────────────────────────────────
+         主體雙欄：左側欄 + 右側主內容
+    ────────────────────────────────────────────── -->
+    <div id="bodyWrap">
+
+        <!-- ── 左側固定欄 ── -->
+        <aside id="sidebar">
+
+            <!-- 頁面導航 -->
+            <nav class="sidebar-nav">
+                <p class="sidebar-nav-title">Navigation</p>
+                <ul>
+                    <li><a href="#section-intro">關於本頁</a></li>
+                    <li><a href="#section-work">近期工作</a></li>
+                    <li><a href="#section-essays">靈犀對談</a></li>
+                    <li><a href="#section-notes">思海拾貝</a></li>
+                    <li><a href="#section-culture">文苑英華</a></li>
+                    <li><a href="#section-contact">聯絡方式</a></li>
+                </ul>
+            </nav>
+
+            <!-- 聯絡信息摘要 -->
+            <div class="sidebar-info">
+                <p class="sidebar-info-title">Contact</p>
+                <div class="sidebar-info-row">
+                    <span class="label">Institution</span>
+                    <span class="value">Peking University<br>NSD, Beijing</span>
+                </div>
+                <div class="sidebar-info-row">
+                    <span class="label">Phone</span>
+                    <span class="value">135-1010-2319</span>
+                </div>
+                <div class="sidebar-info-row">
+                    <span class="label">Email</span>
+                    <span class="value">
+                        <a href="/cdn-cgi/l/email-protection#ccbca3a0adbea5bffefefcfcfcfdf9f8f8ff8caba1ada5a0e2afa3a1">
+                            polaris2200015443<br>@gmail.com
+                        </a>
+                    </span>
+                </div>
+            </div>
+
+            <!-- 側欄快速連結 -->
+            <div class="sidebar-links">
+                <a href="cv.html" target="_blank">Curriculum Vitae</a>
+                <a href="云端日历.html" target="_blank" class="zh">雲端日曆</a>
+            </div>
+
+        </aside>
+
+
+        <!-- ── 右側主內容 ── -->
+        <main id="mainContent">
+
+            <!-- 引言（一）-->
+            <section class="content-section">
+                <div id="section-intro" style="position:relative;top:-70px;visibility:hidden;"></div>
+                <div class="section-heading">
+                    <h2>關於本頁</h2>
+                    <span class="section-label">About</span>
+                </div>
+                <div class="intro-quote">
+                    <p>
+                        歡迎來到我的主頁！<br>
+                        在這裡，我分享自己的一點點奇思妙想，也記錄那些觸動我的瞬間。<br>
+                        希望我的文字能為你帶來一點啟發或愉悅。<br>
+                        與君登臨處，共賞雲卷舒。
+                    </p>
+                    <div class="intro-motto">
+                        真正的理性，永遠超越個體存亡的狹隘邊界。
+                        <span class="en">Vera ratio semper excedit angustias individualis existentiae.</span>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- 近期工作（二）-->
+            <section class="content-section">
+                <div id="section-work" style="position:relative;top:-70px;visibility:hidden;"></div>
+                <div class="section-heading">
+                    <h2>近期工作</h2>
+                    <span class="section-label">Recent Work</span>
+                </div>
+
+                <div class="item-row">
+                    <div class="item-title-zh">
+                        <a href="https://docs.qq.com/doc/DQ25RU25SWmtXcXV3?scene=baa27267d571d36925b06cb4Uodvs1"
+                           target="_blank">本研工作日誌</a>
+                    </div>
+                    <span class="item-date">2025.03.31</span>
+                </div>
+
+                <div class="item-row">
+                    <div class="item-title-zh">
+                        <a href="https://docs.qq.com/doc/DRmRNRmV3WFVNVmth"
+                           target="_blank">科研注意事項</a>
+                    </div>
+                    <span class="item-date">2025.03.31</span>
+                </div>
+
+                <div class="item-row">
+                    <div class="item-title-zh" style="color:var(--ink-light)">—</div>
+                    <span class="item-date">2025.03.28</span>
+                </div>
+
+                <div class="item-row">
+                    <div class="item-title-zh" style="color:var(--ink-light)">—</div>
+                    <span class="item-date">2025.03.28</span>
+                </div>
+            </section>
+
+
+            <!-- 靈犀對談（三）-->
+            <section class="content-section">
+                <div id="section-essays" style="position:relative;top:-70px;visibility:hidden;"></div>
+                <div class="section-heading">
+                    <h2>靈犀對談</h2>
+                    <span class="section-label">Dialogues &amp; Essays</span>
+                </div>
+
+                <div class="item-row">
+                    <div class="item-title-zh">
+                        <a href="javascript:void(0)"
+                           onclick="openWordViewer('articles/20250328_真诚、信任的理性抉择.docx')">
+                            真誠、信任的理性抉擇
+                        </a>
+                    </div>
+                </div>
+
+                <div class="item-row stacked">
+                    <div class="item-title-zh">
+                        馬原期末論文：對剩餘價值產生機制和「勞動力商品」特殊性的思考
+                    </div>
+                    <p class="item-note">有關勞動力作為一種有別於普通商品的「特殊商品」的問題</p>
+                    <div class="item-doc-links">
+                        <a href="javascript:void(0)"
+                           onclick="openWordViewer('articles/马原期末论文：对剩余价值产生机制和\u201c劳动力商品\u201d特殊性的思考.docx')">論文</a>
+                        <a href="javascript:void(0)"
+                           onclick="openPdfViewer('articles/马原期末论文汇报ppt：对剩余价值产生机制和\u201c劳动力商品\u201d特殊性的思考.pdf')">PPT</a>
+                    </div>
+                </div>
+
+                <div class="item-row">
+                    <div class="item-title-zh">
+                        <a href="javascript:void(0)"
+                           onclick="openWordViewer('articles/20250404_生育的得失.docx')">生育的得失</a>
+                    </div>
+                </div>
+
+                <div class="item-row">
+                    <div class="item-title-zh">
+                        <a href="javascript:void(0)"
+                           onclick="openWordViewer('articles/20250404_经济学的数学化与信息经济学的若干问题.docx')">
+                            經濟學的數學化與信息經濟學的若干問題
+                        </a>
+                    </div>
+                </div>
+
+                <div class="item-row">
+                    <div class="item-title-zh">
+                        <a href="javascript:void(0)"
+                           onclick="openWordViewer('articles/20250404_交易费用的益处.docx')">交易費用的益處</a>
+                    </div>
+                </div>
+
+                <div class="item-row">
+                    <div class="item-title-zh">
+                        <a href="javascript:void(0)"
+                           onclick="openWordViewer('articles/20250404_容忍度的测度：离婚的故事.docx')">
+                            容忍度的測度：離婚的故事
+                        </a>
+                    </div>
+                </div>
+
+                <div class="item-row">
+                    <div class="item-title-zh">
+                        <a href="javascript:void(0)"
+                           onclick="openWordViewer('articles/20250425_权力如何异化关系.docx')">權力如何異化關係</a>
+                    </div>
+                </div>
+
+                <div class="item-row">
+                    <div class="item-title-zh">
+                        <a href="javascript:void(0)"
+                           onclick="openWordViewer('articles/20250426_情商、隐喻型文化与利他主义.docx')">
+                            情商、隱喻型文化與利他主義
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- 思海拾貝（四）-->
+            <section class="content-section">
+                <div id="section-notes" style="position:relative;top:-70px;visibility:hidden;"></div>
+                <div class="section-heading">
+                    <h2>思海拾貝</h2>
+                    <span class="section-label">Notes &amp; Reflections</span>
+                </div>
+
+                <div class="item-row">
+                    <div class="item-title-zh"><a href="thoughts_economy.html">經濟學問題與思考</a></div>
+                </div>
+                <div class="item-row">
+                    <div class="item-title-zh"><a href="thoughts_religion.html">哲學、宗教問題與思考</a></div>
+                </div>
+                <div class="item-row">
+                    <div class="item-title-zh"><a href="thoughts_society.html">社會問題與思考</a></div>
+                </div>
+                <div class="item-row">
+                    <div class="item-title-zh"><a href="diary_notebook.html">隨手記</a></div>
+                </div>
+            </section>
+
+
+            <!-- 文苑英華（五）-->
+            <section class="content-section">
+                <div id="section-culture" style="position:relative;top:-70px;visibility:hidden;"></div>
+                <div class="section-heading">
+                    <h2>文苑英華</h2>
+                    <span class="section-label">Literature &amp; Culture</span>
+                </div>
+                <div class="item-row">
+                    <div class="item-title-zh">
+                        <a href="philosophy.html">儒釋道本一，身心靈不二</a>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- 聯絡（六）-->
+            <section class="content-section">
+                <div id="section-contact" style="position:relative;top:-70px;visibility:hidden;"></div>
+                <div class="section-heading">
+                    <h2>聯絡方式</h2>
+                    <span class="section-label">Get In Touch</span>
+                </div>
+                <p class="contact-intro">
+                    I'm always eager to engage in meaningful academic discussions and
+                    collaborations. If you have research-related questions, ideas, or
+                    insightful perspectives to share, please feel free to reach out.
+                </p>
+                <div class="contact-grid">
+                    <div class="contact-form">
+                        <input type="text"  placeholder="Name" />
+                        <input type="email" placeholder="Email" />
+                        <textarea rows="4"  placeholder="Message"></textarea>
+                        <button type="button">Send Message</button>
+                    </div>
+                    <div class="contact-info">
+                        <div class="c-row">
+                            <span class="contact-label">Address</span>
+                            <span class="contact-value">
+                                Peking University<br>
+                                5 Yiheyuan Road, Haidian District<br>
+                                Beijing, China
+                            </span>
+                        </div>
+                        <div class="c-row">
+                            <span class="contact-label">Phone</span>
+                            <span class="contact-value">135-1010-2319</span>
+                        </div>
+                        <div class="c-row">
+                            <span class="contact-label">Email</span>
+                            <span class="contact-value">
+                                <a href="/cdn-cgi/l/email-protection#8dfde2e1ecffe4febfbfbdbdbdbcb8b9b9becdeae0ece4e1a3eee2e0">
+                                    <span class="__cf_email__" data-cfemail="85f5eae9e4f7ecf6b7b7b5b5b5b4b0b1b1b6c5e2e8e4ece9abe6eae8">[email&#160;protected]</span>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div><!-- /#bodyWrap -->
+
+
+    <!-- ──────────────────────────────────────────────
+         頁腳
+    ────────────────────────────────────────────── -->
+    <footer id="footer">
+        <div class="footer-inner">
+            <p class="footer-copy">
+                &copy; 趙東逸 Elliott Zhao · Peking University &nbsp;·&nbsp;
+                Design adapted from <a href="http://html5up.net" target="_blank">HTML5 UP</a>
+            </p>
+            <!-- 莫內畫作調色條 -->
+            <div class="footer-palette">
+                <span style="background:#AA9C83"></span>
+                <span style="background:#6F8B86"></span>
+                <span style="background:#B0B5AD"></span>
+                <span style="background:#6789A0"></span>
+                <span style="background:#D39454"></span>
+                <span style="background:#465C5A"></span>
+            </div>
+        </div>
+    </footer>
+
+</div><!-- /#pageWrap -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     Word 文件查看器 Modal
+══════════════════════════════════════════════════════ -->
+<div id="wordModal" class="doc-modal">
+    <div class="modal-inner">
+        <div class="modal-toolbar">
+            <span class="modal-label">Document Viewer</span>
+            <button class="modal-close" onclick="closeWordViewer()">關閉 ×</button>
+        </div>
+        <iframe id="wordFrame" class="modal-frame" src=""></iframe>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PDF 查看器 Modal
+══════════════════════════════════════════════════════ -->
+<div id="pdfModal" class="doc-modal">
+    <div class="modal-inner">
+        <div class="modal-toolbar">
+            <span class="modal-label">PDF Viewer</span>
+            <button class="modal-close" onclick="closePdfViewer()">關閉 ×</button>
+        </div>
+        <iframe id="pdfFrame" class="modal-frame" src=""></iframe>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     JavaScript
+
+     一、密碼驗證
+     二、Word 查看器
+     三、PDF 查看器
+══════════════════════════════════════════════════════ -->
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ── 一、密碼驗證 ────────────────────────────────────── */
+const CORRECT_PASSWORD = "sol142857";
+const MAX_ATTEMPTS = 10;
+let authAttempts = 0;
+
+function showPage() {
+    document.getElementById("authOverlay").style.display = "none";
+    document.getElementById("pageWrap").style.display = "block";
+}
+function checkPassword() {
+    if (authAttempts >= MAX_ATTEMPTS) { alert("嘗試次數過多，請稍後再試"); return; }
+    const input = document.getElementById("passwordInput").value;
+    if (input === CORRECT_PASSWORD) {
+        localStorage.setItem("authToken", CORRECT_PASSWORD);
+        showPage();
+    } else {
+        authAttempts++;
+        const err = document.getElementById("authError");
+        err.style.display = "block";
+        document.getElementById("passwordInput").value = "";
+        setTimeout(() => { err.style.display = "none"; }, 2000);
+    }
+}
+/* 頁面載入時若已有 token 則直接跳過密碼框 */
+document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("authToken") === CORRECT_PASSWORD) showPage();
+});
+
+
+/* ── 二、Word 查看器 ─────────────────────────────────── */
+const GITHUB_RAW = "https://raw.githubusercontent.com/polaris200212/polaris200212.github.io/main/";
+
+function openWordViewer(docPath) {
+    if (!docPath?.toLowerCase().endsWith('.docx')) { alert('僅支援 .docx 格式'); return; }
+    const url = "https://view.officeapps.live.com/op/embed.aspx?src="
+              + encodeURIComponent(GITHUB_RAW + docPath);
+    document.getElementById("wordFrame").src = url;
+    document.getElementById("wordModal").classList.add("active");
+}
+function closeWordViewer() {
+    document.getElementById("wordModal").classList.remove("active");
+    document.getElementById("wordFrame").src = "";
+}
+
+
+/* ── 三、PDF 查看器 ──────────────────────────────────── */
+function openPdfViewer(pdfPath) {
+    if (!pdfPath?.toLowerCase().endsWith('.pdf')) { alert('僅支援 .pdf 格式'); return; }
+    document.getElementById("pdfFrame").src = GITHUB_RAW + pdfPath;
+    document.getElementById("pdfModal").classList.add("active");
+}
+function closePdfViewer() {
+    document.getElementById("pdfModal").classList.remove("active");
+    document.getElementB
