@@ -5,56 +5,134 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的云端日程</title>
     <style>
-        :root { --bg-color: #F0EFEB; --primary-green: #7D9087; --primary-brown: #8A7A6D; --text-dark: #4A4643; --text-light: #FAF9F8; --grid-bg: #F8F7F5; --border-color: #D8D4CC; --hover-color: #E6E3DB; }
-        body { font-family: 'PingFang SC', sans-serif; background-color: var(--bg-color); color: var(--text-dark); margin: 0; padding: 40px 20px; display: flex; justify-content: center; }
-        .calendar-container { width: 100%; max-width: 1000px; background-color: var(--text-light); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid var(--border-color); }
+        /* 莫兰迪色系与基础样式 */
+        :root { 
+            --bg-color: #F0EFEB; --primary-green: #7D9087; --primary-brown: #8A7A6D; 
+            --text-dark: #4A4643; --text-light: #FAF9F8; --grid-bg: #F8F7F5; 
+            --border-color: #D8D4CC; --hover-color: #E6E3DB;
+            /* 紧急程度专属颜色 (莫兰迪调色) */
+            --u-red: #C58782;     /* 红色：紧急 (灰粉红) */
+            --u-yellow: #D0B285;  /* 黄色：一般 (灰芥末黄) */
+            --u-green: #90A296;   /* 绿色：宽松 (灰豆绿) */
+        }
+        body { font-family: 'PingFang SC', sans-serif; background-color: var(--bg-color); color: var(--text-dark); margin: 0; padding: 30px 20px; display: flex; justify-content: center; }
+        
+        /* 整体布局：左侧日历，右侧待办 */
+        .app-container { display: flex; gap: 20px; width: 100%; max-width: 1300px; align-items: flex-start; }
+        
+        /* 左侧日历区域 */
+        .calendar-container { flex: 1; background-color: var(--text-light); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid var(--border-color); }
         .calendar-header { background-color: var(--primary-green); color: var(--text-light); padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
         .header-controls select, .header-controls button { background-color: rgba(255, 255, 255, 0.2); color: var(--text-light); border: 1px solid rgba(255, 255, 255, 0.4); padding: 8px 12px; border-radius: 6px; font-size: 16px; cursor: pointer; margin-right: 10px; }
         .header-controls select option { background-color: var(--text-light); color: var(--text-dark); }
         .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); background-color: var(--primary-brown); color: var(--text-light); text-align: center; padding: 10px 0; font-weight: bold; font-size: 14px; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 1px solid var(--border-color); border-left: 1px solid var(--border-color); }
-        .day-cell { min-height: 120px; background-color: var(--grid-bg); border-right: 1px solid var(--border-color); border-top: 1px solid var(--border-color); padding: 10px; cursor: pointer; display: flex; flex-direction: column; }
+        .day-cell { min-height: 120px; background-color: var(--grid-bg); border-right: 1px solid var(--border-color); border-top: 1px solid var(--border-color); padding: 8px; cursor: pointer; display: flex; flex-direction: column; }
         .day-cell:hover { background-color: var(--hover-color); }
         .day-cell.empty { background-color: var(--bg-color); cursor: default; }
         .day-cell.today { background-color: #E8EBE9; }
-        .day-number { font-size: 18px; font-weight: bold; margin-bottom: 8px; color: var(--primary-brown); }
+        .day-number { font-size: 16px; font-weight: bold; margin-bottom: 5px; color: var(--primary-brown); }
         .schedule-list { flex-grow: 1; overflow-y: auto; font-size: 12px; }
-        .schedule-item { background-color: var(--primary-green); color: var(--text-light); padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; line-height: 1.4; word-break: break-all; }
-        .schedule-time-range { font-weight: bold; display: block; font-size: 11px; opacity: 0.9; }
+        
+        /* 任务条目样式 */
+        .schedule-item { 
+            padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; line-height: 1.4; word-break: break-all; color: white;
+            display: flex; gap: 6px; align-items: flex-start;
+        }
+        .schedule-item input[type="checkbox"] { margin-top: 2px; cursor: pointer; }
+        .task-content { flex: 1; display: flex; flex-direction: column; }
+        .schedule-time-range { font-weight: bold; font-size: 11px; opacity: 0.9; }
+        
+        /* 颜色与完成状态 */
+        .bg-red { background-color: var(--u-red); }
+        .bg-yellow { background-color: var(--u-yellow); }
+        .bg-green { background-color: var(--u-green); }
+        .completed { background-color: var(--hover-color) !important; color: #999 !important; }
+        .completed .task-text, .completed .schedule-time-range { text-decoration: line-through; opacity: 0.6; }
+
+        /* 右侧待办事项栏 */
+        .sidebar-container { width: 320px; background-color: var(--text-light); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; height: 80vh; position: sticky; top: 30px; }
+        .sidebar-title { color: var(--primary-green); margin-top: 0; padding-bottom: 10px; border-bottom: 2px solid var(--hover-color); display: flex; justify-content: space-between; align-items: center;}
+        .backlog-input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .backlog-input-group input[type="text"] { padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; }
+        .backlog-input-group button { padding: 8px; background-color: var(--primary-brown); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .backlog-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; }
+        .backlog-item { background-color: var(--grid-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; cursor: grab; transition: transform 0.1s, box-shadow 0.1s; }
+        .backlog-item:active { cursor: grabbing; transform: scale(0.98); }
+        .backlog-item.drag-over { border-top: 3px dashed var(--primary-green); }
+        .backlog-item .drag-handle { color: #ccc; cursor: grab; padding-right: 5px; }
+        .backlog-item .task-text { flex: 1; font-size: 14px; }
+        
+        /* 弹窗样式调整 */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(74, 70, 67, 0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background-color: var(--text-light); padding: 30px; border-radius: 12px; width: 450px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); max-height: 80vh; overflow-y: auto; }
+        .modal-content { background-color: var(--text-light); padding: 30px; border-radius: 12px; width: 480px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); max-height: 80vh; overflow-y: auto; }
         .modal-title { color: var(--primary-green); margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid var(--hover-color); padding-bottom: 10px; }
         .time-group { display: flex; gap: 10px; margin-bottom: 15px; }
         .time-group .form-group { flex: 1; margin-bottom: 0; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; color: var(--primary-brown); font-weight: bold; font-size: 14px; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-family: inherit; }
+        .form-group input[type="text"], .form-group input[type="time"] { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-family: inherit; }
+        
+        /* 紧急程度单选按钮组 */
+        .urgency-options { display: flex; gap: 15px; }
+        .urgency-options label { display: flex; align-items: center; gap: 5px; cursor: pointer; font-weight: normal; color: var(--text-dark); }
+        
+        /* 随时修改颜色的小圆点样式 */
+        .color-dots { display: flex; gap: 6px; align-items: center; }
+        .dot { width: 14px; height: 14px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.1s; }
+        .dot:hover { transform: scale(1.2); }
+        .dot.red { background-color: var(--u-red); }
+        .dot.yellow { background-color: var(--u-yellow); }
+        .dot.green { background-color: var(--u-green); }
+        .dot.active { border-color: var(--text-dark); } /* 当前选中的颜色加深边框 */
+
         .btn-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
         button { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .btn-save { background-color: var(--primary-green); color: var(--text-light); }
         .btn-cancel { background-color: var(--hover-color); color: var(--text-dark); }
         .modal-schedules { margin-top: 20px; border-top: 1px dashed var(--border-color); padding-top: 15px; }
-        .modal-schedule-item { display: flex; justify-content: space-between; align-items: center; background-color: var(--hover-color); padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; font-size: 14px; }
-        .btn-delete { background-color: var(--primary-brown); color: var(--text-light); padding: 4px 8px; font-size: 12px; }
+        .modal-schedule-item { display: flex; justify-content: space-between; align-items: center; background-color: var(--hover-color); padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; font-size: 14px; gap: 10px; }
+        .btn-delete { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-dark); padding: 4px 8px; font-size: 12px; }
+        .btn-delete:hover { background-color: var(--u-red); color: white; border-color: var(--u-red); }
         #loading-tip { color: var(--text-light); font-size: 14px; margin-left: 20px; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; display: none; }
     </style>
 </head>
 <body>
 
-<div class="calendar-container">
-    <div class="calendar-header">
-        <div style="display: flex; align-items: center;">
-            <h2 id="current-month-display" style="margin: 0; font-weight: normal;"></h2>
-            <span id="loading-tip">正在同步云端数据...</span>
+<div class="app-container">
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <div style="display: flex; align-items: center;">
+                <h2 id="current-month-display" style="margin: 0; font-weight: normal;"></h2>
+                <span id="loading-tip">正在同步云端数据...</span>
+            </div>
+            <div class="header-controls">
+                <select id="year-select"></select>
+                <select id="month-select"></select>
+                <button onclick="goToToday()">回到今天</button>
+            </div>
         </div>
-        <div class="header-controls">
-            <select id="year-select"></select>
-            <select id="month-select"></select>
-            <button onclick="goToToday()">回到今天</button>
-        </div>
+        <div class="weekdays"><div>周日</div><div>周一</div><div>周二</div><div>周三</div><div>周四</div><div>周五</div><div>周六</div></div>
+        <div class="calendar-grid" id="calendar-grid"></div>
     </div>
-    <div class="weekdays"><div>周日</div><div>周一</div><div>周二</div><div>周三</div><div>周四</div><div>周五</div><div>周六</div></div>
-    <div class="calendar-grid" id="calendar-grid"></div>
+
+    <div class="sidebar-container">
+        <h3 class="sidebar-title">
+            随时待办事项
+            <span style="font-size: 12px; color: var(--primary-brown); font-weight: normal;">(拖拽排序)</span>
+        </h3>
+        <div class="backlog-input-group">
+            <input type="text" id="backlog-task" placeholder="添加不需要定日期的任务...">
+            <div class="urgency-options" style="font-size: 13px;">
+                <label><input type="radio" name="backlog-urgency" value="red"> 🔴紧急</label>
+                <label><input type="radio" name="backlog-urgency" value="yellow"> 🟡一般</label>
+                <label><input type="radio" name="backlog-urgency" value="green" checked> 🟢宽松</label>
+            </div>
+            <button onclick="addBacklog()">+ 添加到清单</button>
+        </div>
+        <ul id="backlog-list" class="backlog-list">
+            </ul>
+    </div>
 </div>
 
 <div class="modal-overlay" id="schedule-modal">
@@ -65,6 +143,16 @@
             <div class="form-group"><label>结束时间</label><input type="time" id="end-time"></div>
         </div>
         <div class="form-group"><label>待办事项</label><input type="text" id="schedule-task" placeholder="你要做些什么呢？"></div>
+        
+        <div class="form-group">
+            <label>紧急程度</label>
+            <div class="urgency-options">
+                <label><input type="radio" name="modal-urgency" value="red"> 🔴 紧急 (红)</label>
+                <label><input type="radio" name="modal-urgency" value="yellow"> 🟡 一般 (黄)</label>
+                <label><input type="radio" name="modal-urgency" value="green" checked> 🟢 宽松 (绿)</label>
+            </div>
+        </div>
+
         <div class="btn-group">
             <button class="btn-cancel" onclick="closeModal()">关闭</button>
             <button class="btn-save" onclick="saveSchedule()">保存日程</button>
@@ -75,59 +163,60 @@
 
 <script>
     // ==========================================
-    // 🔴 必填区：把你的信息贴在下面这两个单引号里！
+    // 🔴 必填区：填入你之前的 URL 和 KEY！
     // ==========================================
     const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/69ba4b0ec3097a1dd53620c3'; 
     const JSONBIN_KEY = '$2a$10$GCrQCNUFS44yX079OORaqO4gAlyI9qJK9Z/X1hqrQTj8nJFNNyS5y';
     // ==========================================
 
-    let schedules = {};
+    let appData = { dates: {}, backlog: [] };
     let currentDate = new Date();
     let selectedDateKey = '';
 
     const grid = document.getElementById('calendar-grid');
     const loadingTip = document.getElementById('loading-tip');
 
-    // 从云端读取
+    // 1. 数据交互层
     async function loadDataFromCloud() {
         if(!JSONBIN_URL.startsWith('http')) return alert('请先在代码里填写 JSONBIN_URL');
         loadingTip.style.display = 'inline-block';
         loadingTip.textContent = "☁️ 正在读取...";
         try {
-            const response = await fetch(JSONBIN_URL, {
-                headers: { 'X-Access-Key': JSONBIN_KEY }
-            });
+            const response = await fetch(JSONBIN_URL, { headers: { 'X-Access-Key': JSONBIN_KEY } });
             const data = await response.json();
-            schedules = data.record || {};
+            const rawData = data.record || {};
+            
+            if (!rawData.dates && !rawData.backlog) {
+                appData = { dates: rawData, backlog: [] };
+            } else {
+                appData = rawData;
+            }
         } catch (error) {
             console.error("读取失败", error);
         } finally {
             loadingTip.style.display = 'none';
             renderCalendar();
+            renderBacklog();
         }
     }
 
-    // 保存到云端
     async function saveDataToCloud() {
         loadingTip.style.display = 'inline-block';
         loadingTip.textContent = "☁️ 正在保存...";
         try {
             await fetch(JSONBIN_URL, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Access-Key': JSONBIN_KEY
-                },
-                body: JSON.stringify(schedules)
+                headers: { 'Content-Type': 'application/json', 'X-Access-Key': JSONBIN_KEY },
+                body: JSON.stringify(appData)
             });
         } catch (error) {
             console.error("保存失败", error);
-            alert("保存失败，请检查网络！");
         } finally {
             loadingTip.style.display = 'none';
         }
     }
 
+    // 2. 初始化控件
     function initControls() {
         const ySel = document.getElementById('year-select'), mSel = document.getElementById('month-select');
         for(let i = 2020; i <= 2050; i++) ySel.appendChild(new Option(i + ' 年', i));
@@ -136,6 +225,9 @@
         mSel.addEventListener('change', () => { currentDate.setMonth(mSel.value); renderCalendar(); });
     }
 
+    function goToToday() { currentDate = new Date(); renderCalendar(); }
+
+    // 3. 渲染左侧日历
     function renderCalendar() {
         const year = currentDate.getFullYear(), month = currentDate.getMonth();
         document.getElementById('year-select').value = year; 
@@ -156,12 +248,24 @@
             const dateKey = `${year}-${month + 1}-${i}`;
             
             let html = `<div class="day-number">${i}</div><div class="schedule-list">`;
-            if (schedules[dateKey]) {
-                schedules[dateKey].forEach(item => {
+            if (appData.dates[dateKey]) {
+                appData.dates[dateKey].forEach((item, index) => {
                     let timeDisplay = item.startTime ? `${item.startTime}` : '';
                     if (item.endTime) timeDisplay += ` - ${item.endTime}`;
                     if (!timeDisplay) timeDisplay = '全天';
-                    html += `<div class="schedule-item"><span class="schedule-time-range">${timeDisplay}</span><span>${item.task}</span></div>`;
+                    
+                    const colorClass = item.urgency ? `bg-${item.urgency}` : 'bg-green';
+                    const completedClass = item.completed ? 'completed' : '';
+                    const checkedStr = item.completed ? 'checked' : '';
+
+                    html += `
+                        <div class="schedule-item ${colorClass} ${completedClass}">
+                            <input type="checkbox" ${checkedStr} onclick="event.stopPropagation(); toggleDateTask('${dateKey}', ${index})">
+                            <div class="task-content">
+                                <span class="schedule-time-range">${timeDisplay}</span>
+                                <span class="task-text">${item.task}</span>
+                            </div>
+                        </div>`;
                 });
             }
             html += `</div>`;
@@ -171,50 +275,181 @@
         }
     }
 
-    function goToToday() { currentDate = new Date(); renderCalendar(); }
+    async function toggleDateTask(dateKey, index) {
+        appData.dates[dateKey][index].completed = !appData.dates[dateKey][index].completed;
+        renderCalendar();
+        if (selectedDateKey === dateKey) renderModalSchedules(); 
+        await saveDataToCloud();
+    }
 
+    // 🚀 新增功能：修改日历任务的颜色
+    async function changeDateTaskUrgency(index, color) {
+        appData.dates[selectedDateKey][index].urgency = color;
+        renderModalSchedules(); // 刷新弹窗
+        renderCalendar();       // 刷新背景日历
+        await saveDataToCloud();// 保存到云端
+    }
+
+    // 4. 弹窗相关逻辑
     const modal = document.getElementById('schedule-modal');
     function openModal(dateKey, day, month, year) {
         selectedDateKey = dateKey;
         document.getElementById('modal-date-title').textContent = `${year}年${month}月${day}日 - 日程安排`;
         document.getElementById('start-time').value = ''; document.getElementById('end-time').value = ''; document.getElementById('schedule-task').value = '';
+        document.querySelector('input[name="modal-urgency"][value="green"]').checked = true; 
         renderModalSchedules(); modal.style.display = 'flex';
     }
     function closeModal() { modal.style.display = 'none'; }
 
     async function saveSchedule() {
         const st = document.getElementById('start-time').value, et = document.getElementById('end-time').value, tsk = document.getElementById('schedule-task').value.trim();
+        const urgency = document.querySelector('input[name="modal-urgency"]:checked').value;
+        
         if(!tsk) return alert('请填写待办事项！');
         if(st && et && st > et) return alert('结束时间不能早于开始时间！');
 
-        if (!schedules[selectedDateKey]) schedules[selectedDateKey] = [];
-        schedules[selectedDateKey].push({ startTime: st, endTime: et, task: tsk });
-        schedules[selectedDateKey].sort((a, b) => (a.startTime || '00:00').localeCompare(b.startTime || '00:00'));
+        if (!appData.dates[selectedDateKey]) appData.dates[selectedDateKey] = [];
+        appData.dates[selectedDateKey].push({ startTime: st, endTime: et, task: tsk, urgency: urgency, completed: false });
+        appData.dates[selectedDateKey].sort((a, b) => (a.startTime || '00:00').localeCompare(b.startTime || '00:00'));
 
         renderModalSchedules(); renderCalendar();
         await saveDataToCloud();
+        
         document.getElementById('start-time').value = ''; document.getElementById('end-time').value = ''; document.getElementById('schedule-task').value = '';
     }
 
     async function deleteSchedule(index) {
-        schedules[selectedDateKey].splice(index, 1);
-        if (schedules[selectedDateKey].length === 0) delete schedules[selectedDateKey];
+        appData.dates[selectedDateKey].splice(index, 1);
+        if (appData.dates[selectedDateKey].length === 0) delete appData.dates[selectedDateKey];
         renderModalSchedules(); renderCalendar();
         await saveDataToCloud();
     }
 
     function renderModalSchedules() {
         const listDiv = document.getElementById('modal-schedules-list'); listDiv.innerHTML = '';
-        if (schedules[selectedDateKey] && schedules[selectedDateKey].length > 0) {
-            schedules[selectedDateKey].forEach((item, index) => {
+        if (appData.dates[selectedDateKey] && appData.dates[selectedDateKey].length > 0) {
+            appData.dates[selectedDateKey].forEach((item, index) => {
                 let timeStr = item.startTime ? item.startTime : '';
                 if (item.endTime) timeStr += ` - ${item.endTime}`;
                 if (!timeStr) timeStr = '全天';
+                
+                const checkedStr = item.completed ? 'checked' : '';
+                const completedStyle = item.completed ? 'text-decoration: line-through; opacity: 0.5;' : '';
+                
+                // 当前颜色的状态
+                const currentU = item.urgency || 'green';
+
                 const itemDiv = document.createElement('div'); itemDiv.className = 'modal-schedule-item';
-                itemDiv.innerHTML = `<div style="flex: 1;"><b>${timeStr}</b> <br> ${item.task}</div><button class="btn-delete" onclick="deleteSchedule(${index})">删除</button>`;
+                itemDiv.innerHTML = `
+                    <input type="checkbox" ${checkedStr} onchange="toggleDateTask('${selectedDateKey}', ${index})">
+                    <div style="flex: 1; ${completedStyle}"><b>${timeStr}</b> <br> ${item.task}</div>
+                    
+                    <div class="color-dots">
+                        <div class="dot red ${currentU === 'red' ? 'active' : ''}" onclick="changeDateTaskUrgency(${index}, 'red')" title="设为紧急"></div>
+                        <div class="dot yellow ${currentU === 'yellow' ? 'active' : ''}" onclick="changeDateTaskUrgency(${index}, 'yellow')" title="设为一般"></div>
+                        <div class="dot green ${currentU === 'green' ? 'active' : ''}" onclick="changeDateTaskUrgency(${index}, 'green')" title="设为宽松"></div>
+                    </div>
+
+                    <button class="btn-delete" onclick="deleteSchedule(${index})">删除</button>
+                `;
                 listDiv.appendChild(itemDiv);
             });
         }
+    }
+
+    // 5. 右侧侧边栏 (随时待办) 逻辑 & 拖拽排序
+    let dragStartIndex = -1;
+
+    // 🚀 新增功能：修改右侧待办清单的颜色
+    async function changeBacklogUrgency(index, color) {
+        appData.backlog[index].urgency = color;
+        renderBacklog();
+        await saveDataToCloud();
+    }
+
+    function renderBacklog() {
+        const list = document.getElementById('backlog-list');
+        list.innerHTML = '';
+        
+        appData.backlog.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.draggable = true;
+            
+            const completedClass = item.completed ? 'completed' : '';
+            const borderColors = { 'red': 'var(--u-red)', 'yellow': 'var(--u-yellow)', 'green': 'var(--u-green)' };
+            const currentU = item.urgency || 'green';
+            
+            li.className = `backlog-item ${completedClass}`;
+            li.style.borderLeft = `5px solid ${borderColors[currentU]}`;
+
+            const checkedStr = item.completed ? 'checked' : '';
+            
+            li.innerHTML = `
+                <span class="drag-handle">☰</span>
+                <input type="checkbox" ${checkedStr} onchange="toggleBacklog(${index})">
+                <span class="task-text">${item.task}</span>
+                
+                <div class="color-dots">
+                    <div class="dot red ${currentU === 'red' ? 'active' : ''}" onclick="changeBacklogUrgency(${index}, 'red')" title="设为紧急"></div>
+                    <div class="dot yellow ${currentU === 'yellow' ? 'active' : ''}" onclick="changeBacklogUrgency(${index}, 'yellow')" title="设为一般"></div>
+                    <div class="dot green ${currentU === 'green' ? 'active' : ''}" onclick="changeBacklogUrgency(${index}, 'green')" title="设为宽松"></div>
+                </div>
+
+                <button onclick="deleteBacklog(${index})" style="background:none; border:none; color:#ccc; cursor:pointer; padding:0; font-size: 16px;">✕</button>
+            `;
+
+            li.addEventListener('dragstart', (e) => {
+                dragStartIndex = index;
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', index); 
+            });
+            li.addEventListener('dragover', (e) => {
+                e.preventDefault(); 
+                li.classList.add('drag-over');
+            });
+            li.addEventListener('dragleave', () => li.classList.remove('drag-over'));
+            li.addEventListener('drop', (e) => {
+                e.preventDefault();
+                li.classList.remove('drag-over');
+                const dropIndex = index;
+                if (dragStartIndex === dropIndex) return;
+
+                const draggedItem = appData.backlog.splice(dragStartIndex, 1)[0];
+                appData.backlog.splice(dropIndex, 0, draggedItem);
+                
+                renderBacklog();
+                saveDataToCloud();
+            });
+
+            list.appendChild(li);
+        });
+    }
+
+    async function addBacklog() {
+        const taskInput = document.getElementById('backlog-task');
+        const task = taskInput.value.trim();
+        const urgency = document.querySelector('input[name="backlog-urgency"]:checked').value;
+        
+        if (!task) return;
+
+        if(!appData.backlog) appData.backlog = [];
+        appData.backlog.unshift({ task: task, urgency: urgency, completed: false });
+        
+        taskInput.value = '';
+        renderBacklog();
+        await saveDataToCloud();
+    }
+
+    async function toggleBacklog(index) {
+        appData.backlog[index].completed = !appData.backlog[index].completed;
+        renderBacklog();
+        await saveDataToCloud();
+    }
+
+    async function deleteBacklog(index) {
+        appData.backlog.splice(index, 1);
+        renderBacklog();
+        await saveDataToCloud();
     }
 
     initControls(); loadDataFromCloud();
