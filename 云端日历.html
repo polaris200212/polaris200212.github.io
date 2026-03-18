@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的云端日程</title>
+    <style>
+        :root { --bg-color: #F0EFEB; --primary-green: #7D9087; --primary-brown: #8A7A6D; --text-dark: #4A4643; --text-light: #FAF9F8; --grid-bg: #F8F7F5; --border-color: #D8D4CC; --hover-color: #E6E3DB; }
+        body { font-family: 'PingFang SC', sans-serif; background-color: var(--bg-color); color: var(--text-dark); margin: 0; padding: 40px 20px; display: flex; justify-content: center; }
+        .calendar-container { width: 100%; max-width: 1000px; background-color: var(--text-light); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid var(--border-color); }
+        .calendar-header { background-color: var(--primary-green); color: var(--text-light); padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .header-controls select, .header-controls button { background-color: rgba(255, 255, 255, 0.2); color: var(--text-light); border: 1px solid rgba(255, 255, 255, 0.4); padding: 8px 12px; border-radius: 6px; font-size: 16px; cursor: pointer; margin-right: 10px; }
+        .header-controls select option { background-color: var(--text-light); color: var(--text-dark); }
+        .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); background-color: var(--primary-brown); color: var(--text-light); text-align: center; padding: 10px 0; font-weight: bold; font-size: 14px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 1px solid var(--border-color); border-left: 1px solid var(--border-color); }
+        .day-cell { min-height: 120px; background-color: var(--grid-bg); border-right: 1px solid var(--border-color); border-top: 1px solid var(--border-color); padding: 10px; cursor: pointer; display: flex; flex-direction: column; }
+        .day-cell:hover { background-color: var(--hover-color); }
+        .day-cell.empty { background-color: var(--bg-color); cursor: default; }
+        .day-cell.today { background-color: #E8EBE9; }
+        .day-number { font-size: 18px; font-weight: bold; margin-bottom: 8px; color: var(--primary-brown); }
+        .schedule-list { flex-grow: 1; overflow-y: auto; font-size: 12px; }
+        .schedule-item { background-color: var(--primary-green); color: var(--text-light); padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; line-height: 1.4; word-break: break-all; }
+        .schedule-time-range { font-weight: bold; display: block; font-size: 11px; opacity: 0.9; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(74, 70, 67, 0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background-color: var(--text-light); padding: 30px; border-radius: 12px; width: 450px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); max-height: 80vh; overflow-y: auto; }
+        .modal-title { color: var(--primary-green); margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid var(--hover-color); padding-bottom: 10px; }
+        .time-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .time-group .form-group { flex: 1; margin-bottom: 0; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: var(--primary-brown); font-weight: bold; font-size: 14px; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-family: inherit; }
+        .btn-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+        button { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-save { background-color: var(--primary-green); color: var(--text-light); }
+        .btn-cancel { background-color: var(--hover-color); color: var(--text-dark); }
+        .modal-schedules { margin-top: 20px; border-top: 1px dashed var(--border-color); padding-top: 15px; }
+        .modal-schedule-item { display: flex; justify-content: space-between; align-items: center; background-color: var(--hover-color); padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; font-size: 14px; }
+        .btn-delete { background-color: var(--primary-brown); color: var(--text-light); padding: 4px 8px; font-size: 12px; }
+        #loading-tip { color: var(--text-light); font-size: 14px; margin-left: 20px; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="calendar-container">
+    <div class="calendar-header">
+        <div style="display: flex; align-items: center;">
+            <h2 id="current-month-display" style="margin: 0; font-weight: normal;"></h2>
+            <span id="loading-tip">正在同步云端数据...</span>
+        </div>
+        <div class="header-controls">
+            <select id="year-select"></select>
+            <select id="month-select"></select>
+            <button onclick="goToToday()">回到今天</button>
+        </div>
+    </div>
+    <div class="weekdays"><div>周日</div><div>周一</div><div>周二</div><div>周三</div><div>周四</div><div>周五</div><div>周六</div></div>
+    <div class="calendar-grid" id="calendar-grid"></div>
+</div>
+
+<div class="modal-overlay" id="schedule-modal">
+    <div class="modal-content">
+        <h3 class="modal-title" id="modal-date-title">添加日程</h3>
+        <div class="time-group">
+            <div class="form-group"><label>开始时间</label><input type="time" id="start-time"></div>
+            <div class="form-group"><label>结束时间</label><input type="time" id="end-time"></div>
+        </div>
+        <div class="form-group"><label>待办事项</label><input type="text" id="schedule-task" placeholder="你要做些什么呢？"></div>
+        <div class="btn-group">
+            <button class="btn-cancel" onclick="closeModal()">关闭</button>
+            <button class="btn-save" onclick="saveSchedule()">保存日程</button>
+        </div>
+        <div class="modal-schedules" id="modal-schedules-list"></div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // 🔴 必填区：把你的信息贴在下面这两个单引号里！
+    // ==========================================
+    const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/69ba4b0ec3097a1dd53620c3'; 
+    const JSONBIN_KEY = '$2a$10$GCrQCNUFS44yX079OORaqO4gAlyI9qJK9Z/X1hqrQTj8nJFNNyS5y';
+    // ==========================================
+
+    let schedules = {};
+    let currentDate = new Date();
+    let selectedDateKey = '';
+
+    const grid = document.getElementById('calendar-grid');
+    const loadingTip = document.getElementById('loading-tip');
+
+    // 从云端读取
+    async function loadDataFromCloud() {
+        if(!JSONBIN_URL.startsWith('http')) return alert('请先在代码里填写 JSONBIN_URL');
+        loadingTip.style.display = 'inline-block';
+        loadingTip.textContent = "☁️ 正在读取...";
+        try {
+            const response = await fetch(JSONBIN_URL, {
+                headers: { 'X-Access-Key': JSONBIN_KEY }
+            });
+            const data = await response.json();
+            schedules = data.record || {};
+        } catch (error) {
+            console.error("读取失败", error);
+        } finally {
+            loadingTip.style.display = 'none';
+            renderCalendar();
+        }
+    }
+
+    // 保存到云端
+    async function saveDataToCloud() {
+        loadingTip.style.display = 'inline-block';
+        loadingTip.textContent = "☁️ 正在保存...";
+        try {
+            await fetch(JSONBIN_URL, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Access-Key': JSONBIN_KEY
+                },
+                body: JSON.stringify(schedules)
+            });
+        } catch (error) {
+            console.error("保存失败", error);
+            alert("保存失败，请检查网络！");
+        } finally {
+            loadingTip.style.display = 'none';
+        }
+    }
+
+    function initControls() {
+        const ySel = document.getElementById('year-select'), mSel = document.getElementById('month-select');
+        for(let i = 2020; i <= 2050; i++) ySel.appendChild(new Option(i + ' 年', i));
+        for(let i = 0; i < 12; i++) mSel.appendChild(new Option((i + 1) + ' 月', i));
+        ySel.addEventListener('change', () => { currentDate.setFullYear(ySel.value); renderCalendar(); });
+        mSel.addEventListener('change', () => { currentDate.setMonth(mSel.value); renderCalendar(); });
+    }
+
+    function renderCalendar() {
+        const year = currentDate.getFullYear(), month = currentDate.getMonth();
+        document.getElementById('year-select').value = year; 
+        document.getElementById('month-select').value = month;
+        document.getElementById('current-month-display').textContent = `${year}年 ${month + 1}月`;
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const today = new Date();
+        const isCurrentMonth = (today.getFullYear() === year && today.getMonth() === month);
+
+        grid.innerHTML = '';
+        for (let i = 0; i < firstDay; i++) grid.appendChild(Object.assign(document.createElement('div'), {className: 'day-cell empty'}));
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const cell = document.createElement('div');
+            cell.className = `day-cell ${isCurrentMonth && i === today.getDate() ? 'today' : ''}`;
+            const dateKey = `${year}-${month + 1}-${i}`;
+            
+            let html = `<div class="day-number">${i}</div><div class="schedule-list">`;
+            if (schedules[dateKey]) {
+                schedules[dateKey].forEach(item => {
+                    let timeDisplay = item.startTime ? `${item.startTime}` : '';
+                    if (item.endTime) timeDisplay += ` - ${item.endTime}`;
+                    if (!timeDisplay) timeDisplay = '全天';
+                    html += `<div class="schedule-item"><span class="schedule-time-range">${timeDisplay}</span><span>${item.task}</span></div>`;
+                });
+            }
+            html += `</div>`;
+            cell.innerHTML = html;
+            cell.onclick = () => openModal(dateKey, i, month + 1, year);
+            grid.appendChild(cell);
+        }
+    }
+
+    function goToToday() { currentDate = new Date(); renderCalendar(); }
+
+    const modal = document.getElementById('schedule-modal');
+    function openModal(dateKey, day, month, year) {
+        selectedDateKey = dateKey;
+        document.getElementById('modal-date-title').textContent = `${year}年${month}月${day}日 - 日程安排`;
+        document.getElementById('start-time').value = ''; document.getElementById('end-time').value = ''; document.getElementById('schedule-task').value = '';
+        renderModalSchedules(); modal.style.display = 'flex';
+    }
+    function closeModal() { modal.style.display = 'none'; }
+
+    async function saveSchedule() {
+        const st = document.getElementById('start-time').value, et = document.getElementById('end-time').value, tsk = document.getElementById('schedule-task').value.trim();
+        if(!tsk) return alert('请填写待办事项！');
+        if(st && et && st > et) return alert('结束时间不能早于开始时间！');
+
+        if (!schedules[selectedDateKey]) schedules[selectedDateKey] = [];
+        schedules[selectedDateKey].push({ startTime: st, endTime: et, task: tsk });
+        schedules[selectedDateKey].sort((a, b) => (a.startTime || '00:00').localeCompare(b.startTime || '00:00'));
+
+        renderModalSchedules(); renderCalendar();
+        await saveDataToCloud();
+        document.getElementById('start-time').value = ''; document.getElementById('end-time').value = ''; document.getElementById('schedule-task').value = '';
+    }
+
+    async function deleteSchedule(index) {
+        schedules[selectedDateKey].splice(index, 1);
+        if (schedules[selectedDateKey].length === 0) delete schedules[selectedDateKey];
+        renderModalSchedules(); renderCalendar();
+        await saveDataToCloud();
+    }
+
+    function renderModalSchedules() {
+        const listDiv = document.getElementById('modal-schedules-list'); listDiv.innerHTML = '';
+        if (schedules[selectedDateKey] && schedules[selectedDateKey].length > 0) {
+            schedules[selectedDateKey].forEach((item, index) => {
+                let timeStr = item.startTime ? item.startTime : '';
+                if (item.endTime) timeStr += ` - ${item.endTime}`;
+                if (!timeStr) timeStr = '全天';
+                const itemDiv = document.createElement('div'); itemDiv.className = 'modal-schedule-item';
+                itemDiv.innerHTML = `<div style="flex: 1;"><b>${timeStr}</b> <br> ${item.task}</div><button class="btn-delete" onclick="deleteSchedule(${index})">删除</button>`;
+                listDiv.appendChild(itemDiv);
+            });
+        }
+    }
+
+    initControls(); loadDataFromCloud();
+</script>
+</body>
+</html>
