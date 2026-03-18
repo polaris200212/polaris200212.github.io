@@ -23,7 +23,8 @@
         /* 左侧日历区域 */
         .calendar-container { flex: 1; background-color: var(--text-light); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid var(--border-color); }
         .calendar-header { background-color: var(--primary-green); color: var(--text-light); padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
-        .header-controls select, .header-controls button { background-color: rgba(255, 255, 255, 0.2); color: var(--text-light); border: 1px solid rgba(255, 255, 255, 0.4); padding: 8px 12px; border-radius: 6px; font-size: 16px; cursor: pointer; margin-right: 10px; }
+        .header-controls select, .header-controls button { background-color: rgba(255, 255, 255, 0.2); color: var(--text-light); border: 1px solid rgba(255, 255, 255, 0.4); padding: 8px 12px; border-radius: 6px; font-size: 16px; cursor: pointer; margin-right: 10px; transition: background 0.2s; }
+        .header-controls button:hover { background-color: rgba(255,255,255,0.3); }
         .header-controls select option { background-color: var(--text-light); color: var(--text-dark); }
         .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); background-color: var(--primary-brown); color: var(--text-light); text-align: center; padding: 10px 0; font-weight: bold; font-size: 14px; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 1px solid var(--border-color); border-left: 1px solid var(--border-color); }
@@ -94,7 +95,9 @@
         .modal-schedule-item { display: flex; justify-content: space-between; align-items: center; background-color: var(--hover-color); padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; font-size: 14px; gap: 10px; }
         .btn-delete { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-dark); padding: 4px 8px; font-size: 12px; }
         .btn-delete:hover { background-color: var(--u-red); color: white; border-color: var(--u-red); }
-        #loading-tip { color: var(--text-light); font-size: 14px; margin-left: 20px; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; display: none; }
+        
+        /* 顶部提示条样式优化 */
+        #loading-tip { color: var(--text-dark); font-size: 13px; margin-left: 20px; background: rgba(255,255,255,0.7); padding: 4px 12px; border-radius: 20px; display: none; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
@@ -104,9 +107,10 @@
         <div class="calendar-header">
             <div style="display: flex; align-items: center;">
                 <h2 id="current-month-display" style="margin: 0; font-weight: normal;"></h2>
-                <span id="loading-tip">正在同步云端数据...</span>
+                <span id="loading-tip"></span>
             </div>
             <div class="header-controls">
+                <button onclick="forceCloudSync()" title="换电脑时，点击拉取云端最新数据">⬇️ 手动同步</button>
                 <select id="year-select"></select>
                 <select id="month-select"></select>
                 <button onclick="goToToday()">回到今天</button>
@@ -162,11 +166,9 @@
 </div>
 
 <script>
-    // ==========================================
-    // 🔴 必填区：填入你之前的 URL 和 KEY！
-    // ==========================================
     const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/69ba4b0ec3097a1dd53620c3'; 
     const JSONBIN_KEY = '$2a$10$GCrQCNUFS44yX079OORaqO4gAlyI9qJK9Z/X1hqrQTj8nJFNNyS5y';
+    const LOCAL_CACHE_KEY = 'morandi_calendar_data';
     // ==========================================
 
     let appData = { dates: {}, backlog: [] };
@@ -176,47 +178,108 @@
     const grid = document.getElementById('calendar-grid');
     const loadingTip = document.getElementById('loading-tip');
 
-    // 1. 数据交互层
-    async function loadDataFromCloud() {
-        if(!JSONBIN_URL.startsWith('http')) return alert('请先在代码里填写 JSONBIN_URL');
+    // UI 提示函数
+    function showTip(text, isError = false) {
         loadingTip.style.display = 'inline-block';
-        loadingTip.textContent = "☁️ 正在读取...";
+        loadingTip.textContent = text;
+        loadingTip.style.color = isError ? '#C58782' : 'var(--text-dark)';
+    }
+    function hideTip(delay = 2000) {
+        setTimeout(() => { loadingTip.style.display = 'none'; }, delay);
+    }
+
+    // ==========================================
+    // 核心重构：本地优先 + 自动静默防覆盖
+    // ==========================================
+
+    // 1. 初始化：秒读本地 + 后台静默查岗
+    function initData() {
+        const localData = localStorage.getItem(LOCAL_CACHE_KEY);
+        if (localData) {
+            appData = JSON.parse(localData);
+            renderCalendar();
+            renderBacklog();
+            
+            // 本地数据加载完毕后，立刻在后台去云端对比一下，防止你忘了刷新
+            silentCloudCheck();
+        } else {
+            // 如果本地完全空了（新电脑），才强制出现下载提示
+            forceCloudSync();
+        }
+    }
+
+    // 2. 强制云同步（点按钮或首次使用触发）
+    async function forceCloudSync() {
+        showTip("☁️ 正在从云端下载...");
         try {
             const response = await fetch(JSONBIN_URL, { headers: { 'X-Access-Key': JSONBIN_KEY } });
             const data = await response.json();
             const rawData = data.record || {};
             
-            if (!rawData.dates && !rawData.backlog) {
-                appData = { dates: rawData, backlog: [] };
-            } else {
-                appData = rawData;
-            }
+            // 兼容空数据结构
+            appData = (!rawData.dates && !rawData.backlog) ? { dates: rawData, backlog: [] } : rawData;
+            
+            // 覆盖本地缓存
+            localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(appData));
+            showTip("✅ 下载完成，数据已更新");
         } catch (error) {
-            console.error("读取失败", error);
+            showTip("❌ 下载失败，请检查网络", true);
         } finally {
-            loadingTip.style.display = 'none';
+            hideTip();
             renderCalendar();
             renderBacklog();
         }
     }
 
-    async function saveDataToCloud() {
-        loadingTip.style.display = 'inline-block';
-        loadingTip.textContent = "☁️ 正在保存...";
+    // 3. 静默检查云端更新的“暗中保护”机制
+    async function silentCloudCheck() {
+        try {
+            const response = await fetch(JSONBIN_URL, { headers: { 'X-Access-Key': JSONBIN_KEY } });
+            const data = await response.json();
+            const cloudData = data.record || {};
+            
+            // 把本地数据和云端数据转成字符串，看看有没有区别
+            if (JSON.stringify(cloudData) !== JSON.stringify(appData)) {
+                // 如果发现不一样，说明你在别的电脑改过，立刻用云端覆盖本地
+                appData = cloudData;
+                localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(appData));
+                renderCalendar();
+                renderBacklog();
+                
+                // 给个安心的小提示
+                showTip("✨ 发现新数据，已自动为您同步！");
+                hideTip(3000); 
+            }
+        } catch (error) {
+            console.log("后台检查网络波动，暂时使用本地数据");
+        }
+    }
+
+    // 4. 混合保存：秒存本地 + 静默上传云端
+    async function saveToBoth() {
+        // 第一步：瞬间存入浏览器缓存（无需等待网络）
+        localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(appData));
+        
+        // 第二步：在后台悄悄同步给 JSONBin
+        showTip("☁️ 正在备份到云端...");
         try {
             await fetch(JSONBIN_URL, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'X-Access-Key': JSONBIN_KEY },
                 body: JSON.stringify(appData)
             });
+            showTip("✅ 云端已同步");
         } catch (error) {
-            console.error("保存失败", error);
+            showTip("❌ 云端同步失败，但已保存在本地", true);
         } finally {
-            loadingTip.style.display = 'none';
+            hideTip();
         }
     }
 
-    // 2. 初始化控件
+    // ==========================================
+    // 界面与交互逻辑
+    // ==========================================
+
     function initControls() {
         const ySel = document.getElementById('year-select'), mSel = document.getElementById('month-select');
         for(let i = 2020; i <= 2050; i++) ySel.appendChild(new Option(i + ' 年', i));
@@ -227,7 +290,6 @@
 
     function goToToday() { currentDate = new Date(); renderCalendar(); }
 
-    // 3. 渲染左侧日历
     function renderCalendar() {
         const year = currentDate.getFullYear(), month = currentDate.getMonth();
         document.getElementById('year-select').value = year; 
@@ -279,18 +341,16 @@
         appData.dates[dateKey][index].completed = !appData.dates[dateKey][index].completed;
         renderCalendar();
         if (selectedDateKey === dateKey) renderModalSchedules(); 
-        await saveDataToCloud();
+        saveToBoth();
     }
 
-    // 🚀 新增功能：修改日历任务的颜色
     async function changeDateTaskUrgency(index, color) {
         appData.dates[selectedDateKey][index].urgency = color;
-        renderModalSchedules(); // 刷新弹窗
-        renderCalendar();       // 刷新背景日历
-        await saveDataToCloud();// 保存到云端
+        renderModalSchedules(); 
+        renderCalendar();       
+        saveToBoth();
     }
 
-    // 4. 弹窗相关逻辑
     const modal = document.getElementById('schedule-modal');
     function openModal(dateKey, day, month, year) {
         selectedDateKey = dateKey;
@@ -313,7 +373,7 @@
         appData.dates[selectedDateKey].sort((a, b) => (a.startTime || '00:00').localeCompare(b.startTime || '00:00'));
 
         renderModalSchedules(); renderCalendar();
-        await saveDataToCloud();
+        saveToBoth();
         
         document.getElementById('start-time').value = ''; document.getElementById('end-time').value = ''; document.getElementById('schedule-task').value = '';
     }
@@ -322,7 +382,7 @@
         appData.dates[selectedDateKey].splice(index, 1);
         if (appData.dates[selectedDateKey].length === 0) delete appData.dates[selectedDateKey];
         renderModalSchedules(); renderCalendar();
-        await saveDataToCloud();
+        saveToBoth();
     }
 
     function renderModalSchedules() {
@@ -335,8 +395,6 @@
                 
                 const checkedStr = item.completed ? 'checked' : '';
                 const completedStyle = item.completed ? 'text-decoration: line-through; opacity: 0.5;' : '';
-                
-                // 当前颜色的状态
                 const currentU = item.urgency || 'green';
 
                 const itemDiv = document.createElement('div'); itemDiv.className = 'modal-schedule-item';
@@ -357,14 +415,12 @@
         }
     }
 
-    // 5. 右侧侧边栏 (随时待办) 逻辑 & 拖拽排序
     let dragStartIndex = -1;
 
-    // 🚀 新增功能：修改右侧待办清单的颜色
     async function changeBacklogUrgency(index, color) {
         appData.backlog[index].urgency = color;
         renderBacklog();
-        await saveDataToCloud();
+        saveToBoth();
     }
 
     function renderBacklog() {
@@ -418,7 +474,7 @@
                 appData.backlog.splice(dropIndex, 0, draggedItem);
                 
                 renderBacklog();
-                saveDataToCloud();
+                saveToBoth();
             });
 
             list.appendChild(li);
@@ -437,22 +493,24 @@
         
         taskInput.value = '';
         renderBacklog();
-        await saveDataToCloud();
+        saveToBoth();
     }
 
     async function toggleBacklog(index) {
         appData.backlog[index].completed = !appData.backlog[index].completed;
         renderBacklog();
-        await saveDataToCloud();
+        saveToBoth();
     }
 
     async function deleteBacklog(index) {
         appData.backlog.splice(index, 1);
         renderBacklog();
-        await saveDataToCloud();
+        saveToBoth();
     }
 
-    initControls(); loadDataFromCloud();
+    // 启动入口：读取本地并静默查岗
+    initControls(); 
+    initData();
 </script>
 </body>
 </html>
