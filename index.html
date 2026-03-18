@@ -69,7 +69,7 @@
         background: var(--bg);
         color: var(--ink);
         font-family: var(--font-zh);
-        font-size: 18.5px;
+        font-size: 20px;
         font-weight: 400;
         line-height: 1.85;
         -webkit-font-smoothing: antialiased;
@@ -148,7 +148,6 @@
 
     /* ══════════════════════════════════════
        四、全站導航欄（頂部）
-       仿 Goldman Sachs / WTO 風格
     ══════════════════════════════════════ */
     #topnav {
         position: sticky; top: 0; z-index: 100;
@@ -235,12 +234,18 @@
         padding: 0 2.5rem;
         height: 100%;
         display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 2.8rem;
+    }
+    .hero-text {
+        display: flex;
         flex-direction: column;
         justify-content: center;
     }
     .hero-name-zh {
         font-family: var(--font-zh);
-        font-size: 0.95rem;
+        font-size: 2.2rem;
         letter-spacing: 0.35em;
         color: rgba(255,255,255,0.65);
         margin-bottom: 0.5rem;
@@ -248,7 +253,7 @@
     }
     .hero-name-en {
         font-family: var(--font-en);
-        font-size: 3.2rem;
+        font-size: 2.3rem;
         font-weight: 700;
         color: #fff;
         line-height: 1.1;
@@ -290,12 +295,9 @@
         color: #fff;
     }
     .hero-links a.zh { font-family: var(--font-zh); font-size: 0.85rem; }
-    /* 頭像浮於 Hero 右側 */
+    /* 頭像作為 hero-content 第一個 flex 子元素，在文字左側 */
     .hero-avatar {
-        position: absolute;
-        right: 8%;
-        top: 50%;
-        transform: translateY(-50%);
+        flex-shrink: 0;
         z-index: 3;
     }
     .hero-avatar img {
@@ -342,7 +344,7 @@
     .sidebar-nav { margin-bottom: 2.5rem; }
     .sidebar-nav-title {
         font-family: var(--font-en);
-        font-size: 0.7rem;
+        font-size: 1rem;
         letter-spacing: 0.18em;
         text-transform: uppercase;
         color: var(--monet-stone);
@@ -358,7 +360,7 @@
         align-items: center;
         gap: 0.6rem;
         padding: 0.65rem 0;
-        font-size: 0.93rem;
+        font-size: 1rem;
         color: var(--ink-mid);
         transition: color 0.16s, padding-left 0.16s;
     }
@@ -381,7 +383,7 @@
     .sidebar-info { margin-top: 2rem; }
     .sidebar-info-title {
         font-family: var(--font-en);
-        font-size: 0.7rem;
+        font-size: 1rem;
         letter-spacing: 0.18em;
         text-transform: uppercase;
         color: var(--monet-stone);
@@ -395,7 +397,7 @@
     }
     .sidebar-info-row .label {
         font-family: var(--font-en);
-        font-size: 0.68rem;
+        font-size: 0.88rem;
         letter-spacing: 0.12em;
         text-transform: uppercase;
         color: var(--monet-stone);
@@ -403,7 +405,7 @@
     }
     .sidebar-info-row .value {
         font-family: var(--font-en);
-        font-size: 0.88rem;
+        font-size: 1rem;
         color: var(--ink-mid);
         line-height: 1.55;
     }
@@ -794,21 +796,23 @@
         <div class="hero-painting"></div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <p class="hero-name-zh">趙 東 逸</p>
-            <h1 class="hero-name-en">
-                <span class="highlight">Elliott</span> Zhao Dongyi
-            </h1>
-            <p class="hero-affil">
-                Economics · National School of Development, Peking University
-            </p>
-            <p class="hero-tagline">熱愛經濟學，思辨於理性與人文之間。</p>
-            <div class="hero-links">
-                <a href="cv.html" target="_blank">Curriculum Vitae</a>
-                <a href="云端日历.html" target="_blank" class="zh">雲端日曆</a>
+            <div class="hero-avatar">
+                <img src="images/photo.jpg" alt="趙東逸 Elliott Zhao" />
             </div>
-        </div>
-        <div class="hero-avatar">
-            <img src="images/photo.jpg" alt="趙東逸 Elliott Zhao" />
+            <div class="hero-text">
+                <p class="hero-name-zh">趙 東 逸</p>
+                <h1 class="hero-name-en">
+                    <span class="highlight">Elliott</span> Zhao Dongyi
+                </h1>
+                <p class="hero-affil">
+                    Economics · National School of Development, Peking University
+                </p>
+                <p class="hero-tagline">熱愛經濟學，思辨於理性與人文之間。</p>
+                <div class="hero-links">
+                    <a href="cv.html" target="_blank">Curriculum Vitae</a>
+                    <a href="云端日历.html" target="_blank" class="zh">雲端日曆</a>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -838,7 +842,7 @@
                 <p class="sidebar-info-title">Contact</p>
                 <div class="sidebar-info-row">
                     <span class="label">Institution</span>
-                    <span class="value">Peking University<br>NSD, Beijing</span>
+                    <span class="value">National School of Development,<br>Peking University, Beijing, CN</span>
                 </div>
                 <div class="sidebar-info-row">
                     <span class="label">Phone</span>
@@ -847,17 +851,12 @@
                 <div class="sidebar-info-row">
                     <span class="label">Email</span>
                     <span class="value">
-                        <a href="/cdn-cgi/l/email-protection#ccbca3a0adbea5bffefefcfcfcfdf9f8f8ff8caba1ada5a0e2afa3a1">
-                            polaris2200015443<br>@gmail.com
+                        <a href="/cdn-cgi/l/email-protection#ccbca3a0adbea5bffefefcfcfcfdf9f8f8ff8caba1ada5a0e2afa3a1"
+                           style="white-space:nowrap;">
+                            polaris2200015443@gmail.com
                         </a>
                     </span>
                 </div>
-            </div>
-
-            <!-- 側欄快速連結 -->
-            <div class="sidebar-links">
-                <a href="cv.html" target="_blank">Curriculum Vitae</a>
-                <a href="云端日历.html" target="_blank" class="zh">雲端日曆</a>
             </div>
 
         </aside>
