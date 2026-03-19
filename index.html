@@ -4,19 +4,23 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <title>趙東逸 Elliott Zhao · Peking University</title>
-
+ 
     <!-- ══════════════════════════════════════
          字體引入
          英文：Times New Roman（系統）
          中文：Noto Serif TC（繁體宋體）
     ══════════════════════════════════════ -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+ 
+    <!-- ══════════════════════════════════════
+         Font Awesome 5 — 社交媒體圖標
+    ══════════════════════════════════════ -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+ 
     <style>
-
+ 
     /* ══════════════════════════════════════
        一、CSS 變量
        取色自莫內《印象·日出》
@@ -30,42 +34,42 @@
         --monet-stone:     #B0B5AD;   /* 石灰綠灰 — 邊框、分割線 */
         --monet-sand:      #AA9C83;   /* 溫砂 — 極淡背景色塊 */
         --monet-amber:     #D39454;   /* 暖橘金 — 僅用於超小點綴 */
-
+ 
         /* 基礎 */
         --bg:              #ffffff;
         --bg-warm:         #faf9f7;   /* 極淺暖白，側欄底色 */
         --ink:             #1e2a2a;   /* 近黑偏青，主文字 */
         --ink-mid:         #3a4f4d;   /* 中調 */
         --ink-light:       #7a8f8c;   /* 淺調 */
-
+ 
         /* 邊框 */
         --rule:            #dde2df;   /* 分割線 */
         --rule-strong:     #b8c4c2;
-
+ 
         /* 圓角 */
         --r:               10px;
         --r-sm:            6px;
-
+ 
         /* 柔和陰影 */
         --sh:              0 2px 20px rgba(70,92,90,0.08);
         --sh-hover:        0 4px 32px rgba(70,92,90,0.13);
-
+ 
         /* 字體 */
         --font-en:  'Times New Roman', Times, serif;
         --font-zh:  'Noto Serif TC', serif;
-
+ 
         /* 佈局 */
         --sidebar-w:  280px;
         --content-w:  780px;
         --wrap-max:   1160px;
     }
-
+ 
     /* ══════════════════════════════════════
        二、全域重置
     ══════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-
+ 
     body {
         background: var(--bg);
         color: var(--ink);
@@ -75,16 +79,16 @@
         line-height: 1.85;
         -webkit-font-smoothing: antialiased;
     }
-
+ 
     a { color: inherit; text-decoration: none; }
-
+ 
     /* 英文元素統一 Times New Roman */
     h1, .en, .nav-en, .section-label, .item-meta,
     .contact-label, .contact-value, .contact-intro,
     .sidebar-links a, .footer-copy,
     input, textarea, button { font-family: var(--font-en); }
-
-
+ 
+ 
     /* ══════════════════════════════════════
        三、密碼驗證遮罩
     ══════════════════════════════════════ */
@@ -145,8 +149,8 @@
         font-size: 0.88rem;
         margin-top: 0.8rem; display: none;
     }
-
-
+ 
+ 
     /* ══════════════════════════════════════
        四、全站導航欄（頂部）
     ══════════════════════════════════════ */
@@ -196,8 +200,8 @@
         color: #fff;
         border-bottom-color: var(--monet-amber);
     }
-
-
+ 
+ 
     /* ══════════════════════════════════════
        五、Hero 橫幅模組
        以莫內風格畫作為背景，文字疊加其上
@@ -309,8 +313,8 @@
         box-shadow: 0 6px 30px rgba(0,0,0,0.3);
         filter: saturate(0.65);
     }
-
-
+ 
+ 
     /* ══════════════════════════════════════
        六、主體雙欄佈局
        左側欄：固定導航 + 精煉簡歷信息
@@ -325,8 +329,8 @@
         gap: 0;
         align-items: start;
     }
-
-
+ 
+ 
     /* ══════════════════════════════════════
        七、左側欄模組
        背景為極淺暖白，與主區白底區分
@@ -340,7 +344,7 @@
         border-right: 1px solid var(--rule);
         background: var(--bg);
     }
-
+ 
     /* 側欄節導航 */
     .sidebar-nav { margin-bottom: 2.5rem; }
     .sidebar-nav-title {
@@ -379,7 +383,7 @@
         padding-left: 4px;
     }
     .sidebar-nav a:hover::before { background: var(--monet-amber); }
-
+ 
     /* 側欄聯絡信息 */
     .sidebar-info { margin-top: 2rem; }
     .sidebar-info-title {
@@ -412,41 +416,7 @@
     }
     .sidebar-info-row .value a { color: var(--monet-blue); }
     .sidebar-info-row .value a:hover { text-decoration: underline; }
-
-/* 側欄社群圖標 */
-    .sidebar-icons {
-        display: flex;
-        gap: 0.6rem;
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid var(--rule);
-        list-style: none;
-    }
-    .sidebar-icons li {
-        border-bottom: none; 
-    }
-    .sidebar-icons a {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        color: var(--monet-sage);
-        border: 1px solid var(--rule-strong);
-        transition: background 0.2s, color 0.2s, border-color 0.2s;
-        font-size: 0.9rem;
-    }
-    .sidebar-icons a:hover {
-        background: var(--monet-teal);
-        color: #fff;
-        border-color: var(--monet-teal);
-    }
-    /* 隱藏輔助閱讀的文字標籤 */
-    .sidebar-icons .label {
-        display: none;
-    }
-
+ 
     /* 側欄連結按鈕 */
     .sidebar-links {
         display: flex; flex-direction: column;
@@ -467,8 +437,35 @@
         border-color: var(--monet-teal);
     }
     .sidebar-links a.zh { font-family: var(--font-zh); font-size: 0.85rem; }
-
-
+ 
+    /* 側欄社交媒體圖標列 */
+    .sidebar-social {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-top: 1.6rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid var(--rule);
+    }
+    .sidebar-social a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px; height: 34px;
+        border: 1px solid var(--rule-strong);
+        border-radius: 50%;
+        color: var(--ink-light);
+        font-size: 0.88rem;
+        transition: background 0.18s, color 0.18s, border-color 0.18s;
+        text-decoration: none;
+    }
+    .sidebar-social a:hover {
+        background: var(--monet-teal);
+        color: #fff;
+        border-color: var(--monet-teal);
+    }
+ 
+ 
     /* ══════════════════════════════════════
        八、右側主內容區模組
        純白底、無卡片、以分割線和間距分區
@@ -477,10 +474,10 @@
         padding: 3.5rem 0 4rem 3.5rem;
         min-width: 0;   /* 防止 grid 溢出 */
     }
-
+ 
     /* 通用區塊容器 */
     .content-section { margin-bottom: 4rem; }
-
+ 
     /* 區塊標題行 */
     .section-heading {
         display: flex;
@@ -503,8 +500,8 @@
         letter-spacing: 0.1em;
         font-style: italic;
     }
-
-
+ 
+ 
     /* ══════════════════════════════════════
        九、引言模組
        乾淨白底，只以左側色條區分
@@ -533,8 +530,8 @@
         margin-top: 0.25rem;
         font-size: 0.88rem;
     }
-
-
+ 
+ 
     /* ══════════════════════════════════════
        十、條目列表（通用）
        極簡橫排，以細分割線分隔
@@ -550,7 +547,7 @@
     }
     .item-row:last-child { border-bottom: none; }
     .item-row:first-child { border-top: 1px solid var(--rule); }
-
+ 
     /* hover 時左側顯示暖橘細線 */
     .item-row::before {
         content: '';
@@ -561,7 +558,7 @@
         transition: background 0.14s;
     }
     .item-row:hover::before { background: var(--monet-amber); }
-
+ 
     .item-title-zh {
         font-family: var(--font-zh);
         font-size: 1rem; color: var(--ink); flex: 1;
@@ -576,7 +573,7 @@
         color: var(--monet-blue);
         border-bottom-color: var(--monet-blue);
     }
-
+ 
     .item-date {
         font-size: 0.82rem; color: var(--ink-light);
         white-space: nowrap; margin-left: 1.5rem;
@@ -587,13 +584,13 @@
         font-size: 0.86rem; color: var(--ink-light);
         margin-top: 0.25rem; font-style: italic;
     }
-
+ 
     /* 縱向條目（含論文 + PPT 雙連結） */
     .item-row.stacked {
         flex-direction: column; align-items: flex-start;
     }
     .item-row.stacked .item-date { margin-left: 0; margin-top: 0.2rem; }
-
+ 
     .item-doc-links { display: flex; gap: 0.55rem; margin-top: 0.55rem; }
     .item-doc-links a {
         font-family: var(--font-en);
@@ -608,8 +605,8 @@
         background: var(--monet-teal); color: #fff;
         border-color: var(--monet-teal);
     }
-
-
+ 
+ 
     /* ══════════════════════════════════════
        十一、聯絡模組
     ══════════════════════════════════════ */
@@ -661,8 +658,8 @@
     }
     .contact-value a { color: var(--monet-blue); }
     .contact-value a:hover { text-decoration: underline; }
-
-
+ 
+ 
     /* ══════════════════════════════════════
        十二、頁腳
     ══════════════════════════════════════ */
@@ -692,8 +689,8 @@
         display: block; width: 26px; height: 5px;
         border-radius: 3px; opacity: 0.75;
     }
-
-
+ 
+ 
     /* ══════════════════════════════════════
        十三、文件查看器 Modal
     ══════════════════════════════════════ */
@@ -735,8 +732,8 @@
     }
     .modal-close:hover { background: var(--monet-teal); color: #fff; border-color: var(--monet-teal); }
     .modal-frame { flex: 1; border: none; width: 100%; }
-
-
+ 
+ 
     /* ══════════════════════════════════════
        十四、載入動畫
     ══════════════════════════════════════ */
@@ -750,7 +747,7 @@
     #hero      { animation-delay: 0.04s; }
     #bodyWrap  { animation-delay: 0.14s; }
     #footer    { animation-delay: 0.22s; }
-
+ 
     .content-section {
         animation: fadeUp 0.5s cubic-bezier(0.22,0.61,0.36,1) both;
     }
@@ -759,8 +756,8 @@
     .content-section:nth-child(3) { animation-delay: 0.36s; }
     .content-section:nth-child(4) { animation-delay: 0.44s; }
     .content-section:nth-child(5) { animation-delay: 0.52s; }
-
-
+ 
+ 
     /* ══════════════════════════════════════
        十五、響應式佈局
     ══════════════════════════════════════ */
@@ -782,11 +779,11 @@
         .contact-grid { grid-template-columns: 1fr; }
         .topnav-links { display: none; }
     }
-
+ 
     </style>
 </head>
 <body>
-
+ 
 <!-- ══════════════════════════════════════════════════════
      密碼驗證遮罩
 ══════════════════════════════════════════════════════ -->
@@ -801,13 +798,13 @@
         <p id="authError" class="auth-error">密碼錯誤，請重試</p>
     </div>
 </div>
-
-
+ 
+ 
 <!-- ══════════════════════════════════════════════════════
      主頁面（通過驗證後顯示）
 ══════════════════════════════════════════════════════ -->
 <div id="pageWrap" style="display:none;">
-
+ 
     <!-- ──────────────────────────────────────────────
          頂部導航欄
     ────────────────────────────────────────────── -->
@@ -822,8 +819,8 @@
             </ul>
         </div>
     </nav>
-
-
+ 
+ 
     <!-- ──────────────────────────────────────────────
          Hero 橫幅：油畫風景圖背景 + 個人信息
     ────────────────────────────────────────────── -->
@@ -850,16 +847,16 @@
             </div>
         </div>
     </section>
-
-
+ 
+ 
     <!-- ──────────────────────────────────────────────
          主體雙欄：左側欄 + 右側主內容
     ────────────────────────────────────────────── -->
     <div id="bodyWrap">
-
+ 
         <!-- ── 左側固定欄 ── -->
         <aside id="sidebar">
-
+ 
             <!-- 頁面導航 -->
             <nav class="sidebar-nav">
                 <p class="sidebar-nav-title">Navigation</p>
@@ -871,7 +868,7 @@
                     <li><a href="#section-culture">文苑英華</a></li>
                 </ul>
             </nav>
-
+ 
             <!-- 聯絡信息摘要 -->
             <div class="sidebar-info">
                 <p class="sidebar-info-title">Contact</p>
@@ -887,25 +884,28 @@
                     <span class="label">Email</span>
                     <span class="value">
                         <a href="/cdn-cgi/l/email-protection#ccbca3a0adbea5bffefefcfcfcfdf9f8f8ff8caba1ada5a0e2afa3a1"
-                           style="white-space:nowrap;">
-                            polaris2200015443@gmail.com
+                             style="white-space:nowrap;">
+                              polaris2200015443@gmail.com
                         </a>
                     </span>
                 </div>
-            </div> <ul class="sidebar-icons">
-                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-                <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-                <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-                <li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-                <li><a href="#" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
-            </ul>
-
+            </div>
+ 
+            <!-- 社交媒體圖標 -->
+            <div class="sidebar-social">
+                <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+                <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+ 
         </aside>
-
-
+ 
+ 
         <!-- ── 右側主內容 ── -->
         <main id="mainContent">
-
+ 
             <!-- 引言（一）-->
             <section class="content-section">
                 <div id="section-intro" style="position:relative;top:-70px;visibility:hidden;"></div>
@@ -926,8 +926,8 @@
                     </div>
                 </div>
             </section>
-
-
+ 
+ 
             <!-- 近期工作（二）-->
             <section class="content-section">
                 <div id="section-work" style="position:relative;top:-70px;visibility:hidden;"></div>
@@ -935,7 +935,7 @@
                     <h2>近期工作</h2>
                     <span class="section-label">Recent Work</span>
                 </div>
-
+ 
                 <div class="item-row">
                     <div class="item-title-zh">
                         <a href="https://docs.qq.com/doc/DQ25RU25SWmtXcXV3?scene=baa27267d571d36925b06cb4Uodvs1"
@@ -943,7 +943,7 @@
                     </div>
                     <span class="item-date">2025.03.31</span>
                 </div>
-
+ 
                 <div class="item-row">
                     <div class="item-title-zh">
                         <a href="https://docs.qq.com/doc/DRmRNRmV3WFVNVmth"
@@ -951,19 +951,19 @@
                     </div>
                     <span class="item-date">2025.03.31</span>
                 </div>
-
+ 
                 <div class="item-row">
                     <div class="item-title-zh" style="color:var(--ink-light)">—</div>
                     <span class="item-date">2025.03.28</span>
                 </div>
-
+ 
                 <div class="item-row">
                     <div class="item-title-zh" style="color:var(--ink-light)">—</div>
                     <span class="item-date">2025.03.28</span>
                 </div>
             </section>
-
-
+ 
+ 
             <!-- 靈犀對談（三）-->
             <section class="content-section">
                 <div id="section-essays" style="position:relative;top:-70px;visibility:hidden;"></div>
@@ -971,7 +971,7 @@
                     <h2>靈犀對談</h2>
                     <span class="section-label">Dialogues &amp; Essays</span>
                 </div>
-
+ 
                 <div class="item-row">
                     <div class="item-title-zh">
                         <a href="javascript:void(0)"
@@ -980,7 +980,7 @@
                         </a>
                     </div>
                 </div>
-
+ 
                 <div class="item-row stacked">
                     <div class="item-title-zh">
                         馬原期末論文：對剩餘價值產生機制和「勞動力商品」特殊性的思考
@@ -993,14 +993,14 @@
                            onclick="openPdfViewer('articles/马原期末论文汇报ppt：对剩余价值产生机制和\u201c劳动力商品\u201d特殊性的思考.pdf')">PPT</a>
                     </div>
                 </div>
-
+ 
                 <div class="item-row">
                     <div class="item-title-zh">
                         <a href="javascript:void(0)"
                            onclick="openWordViewer('articles/20250404_生育的得失.docx')">生育的得失</a>
                     </div>
                 </div>
-
+ 
                 <div class="item-row">
                     <div class="item-title-zh">
                         <a href="javascript:void(0)"
@@ -1009,14 +1009,14 @@
                         </a>
                     </div>
                 </div>
-
+ 
                 <div class="item-row">
                     <div class="item-title-zh">
                         <a href="javascript:void(0)"
                            onclick="openWordViewer('articles/20250404_交易费用的益处.docx')">交易費用的益處</a>
                     </div>
                 </div>
-
+ 
                 <div class="item-row">
                     <div class="item-title-zh">
                         <a href="javascript:void(0)"
@@ -1025,14 +1025,14 @@
                         </a>
                     </div>
                 </div>
-
+ 
                 <div class="item-row">
                     <div class="item-title-zh">
                         <a href="javascript:void(0)"
                            onclick="openWordViewer('articles/20250425_权力如何异化关系.docx')">權力如何異化關係</a>
                     </div>
                 </div>
-
+ 
                 <div class="item-row">
                     <div class="item-title-zh">
                         <a href="javascript:void(0)"
@@ -1042,8 +1042,8 @@
                     </div>
                 </div>
             </section>
-
-
+ 
+ 
             <!-- 思海拾貝（四）-->
             <section class="content-section">
                 <div id="section-notes" style="position:relative;top:-70px;visibility:hidden;"></div>
@@ -1051,7 +1051,7 @@
                     <h2>思海拾貝</h2>
                     <span class="section-label">Notes &amp; Reflections</span>
                 </div>
-
+ 
                 <div class="item-row">
                     <div class="item-title-zh"><a href="thoughts_economy.html">經濟學問題與思考</a></div>
                 </div>
@@ -1065,8 +1065,8 @@
                     <div class="item-title-zh"><a href="diary_notebook.html">隨手記</a></div>
                 </div>
             </section>
-
-
+ 
+ 
             <!-- 文苑英華（五）-->
             <section class="content-section">
                 <div id="section-culture" style="position:relative;top:-70px;visibility:hidden;"></div>
@@ -1080,8 +1080,8 @@
                     </div>
                 </div>
             </section>
-
-
+ 
+ 
             <!-- 聯絡（六）-->
             <section class="content-section">
                 <div id="section-contact" style="position:relative;top:-70px;visibility:hidden;"></div>
@@ -1117,19 +1117,20 @@
                         <div class="c-row">
                             <span class="contact-label">Email</span>
                             <span class="contact-value">
-                                <a href="/cdn-cgi/l/email-protection#8dfde2e1ecffe4febfbfbdbdbdbcb8b9b9becdeae0ece4e1a3eee2e0">
-                                    <span class="__cf_email__" data-cfemail="85f5eae9e4f7ecf6b7b7b5b5b5b4b0b1b1b6c5e2e8e4ece9abe6eae8">[email&#160;protected]</span>
+                        	<a href="/cdn-cgi/l/email-protection#ccbca3a0adbea5bffefefcfcfcfdf9f8f8ff8caba1ada5a0e2afa3a1"
+                           	     style="white-space:nowrap;">
+                                      polaris2200015443@gmail.com
                                 </a>
                             </span>
                         </div>
                     </div>
                 </div>
             </section>
-
+ 
         </main>
     </div><!-- /#bodyWrap -->
-
-
+ 
+ 
     <!-- ──────────────────────────────────────────────
          頁腳
     ────────────────────────────────────────────── -->
@@ -1150,10 +1151,10 @@
             </div>
         </div>
     </footer>
-
+ 
 </div><!-- /#pageWrap -->
-
-
+ 
+ 
 <!-- ══════════════════════════════════════════════════════
      Word 文件查看器 Modal
 ══════════════════════════════════════════════════════ -->
@@ -1166,7 +1167,7 @@
         <iframe id="wordFrame" class="modal-frame" src=""></iframe>
     </div>
 </div>
-
+ 
 <!-- ══════════════════════════════════════════════════════
      PDF 查看器 Modal
 ══════════════════════════════════════════════════════ -->
@@ -1179,21 +1180,21 @@
         <iframe id="pdfFrame" class="modal-frame" src=""></iframe>
     </div>
 </div>
-
-
+ 
+ 
 <!-- ══════════════════════════════════════════════════════
      JavaScript
-
+ 
      一、密碼驗證
      二、Word 查看器
      三、PDF 查看器
 ══════════════════════════════════════════════════════ -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ── 一、密碼驗證 ────────────────────────────────────── */
 const CORRECT_PASSWORD = "sol142857";
 const MAX_ATTEMPTS = 10;
 let authAttempts = 0;
-
+ 
 function showPage() {
     document.getElementById("authOverlay").style.display = "none";
     document.getElementById("pageWrap").style.display = "block";
@@ -1216,11 +1217,11 @@ function checkPassword() {
 document.addEventListener("DOMContentLoaded", () => {
     if (localStorage.getItem("authToken") === CORRECT_PASSWORD) showPage();
 });
-
-
+ 
+ 
 /* ── 二、Word 查看器 ─────────────────────────────────── */
 const GITHUB_RAW = "https://raw.githubusercontent.com/polaris200212/polaris200212.github.io/main/";
-
+ 
 function openWordViewer(docPath) {
     if (!docPath?.toLowerCase().endsWith('.docx')) { alert('僅支援 .docx 格式'); return; }
     const url = "https://view.officeapps.live.com/op/embed.aspx?src="
@@ -1232,8 +1233,8 @@ function closeWordViewer() {
     document.getElementById("wordModal").classList.remove("active");
     document.getElementById("wordFrame").src = "";
 }
-
-
+ 
+ 
 /* ── 三、PDF 查看器 ──────────────────────────────────── */
 function openPdfViewer(pdfPath) {
     if (!pdfPath?.toLowerCase().endsWith('.pdf')) { alert('僅支援 .pdf 格式'); return; }
