@@ -10,6 +10,7 @@
          英文：Times New Roman（系統）
          中文：Noto Serif TC（繁體宋體）
     ══════════════════════════════════════ -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -411,6 +412,40 @@
     }
     .sidebar-info-row .value a { color: var(--monet-blue); }
     .sidebar-info-row .value a:hover { text-decoration: underline; }
+
+/* 側欄社群圖標 */
+    .sidebar-icons {
+        display: flex;
+        gap: 0.6rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--rule);
+        list-style: none;
+    }
+    .sidebar-icons li {
+        border-bottom: none; 
+    }
+    .sidebar-icons a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        color: var(--monet-sage);
+        border: 1px solid var(--rule-strong);
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+        font-size: 0.9rem;
+    }
+    .sidebar-icons a:hover {
+        background: var(--monet-teal);
+        color: #fff;
+        border-color: var(--monet-teal);
+    }
+    /* 隱藏輔助閱讀的文字標籤 */
+    .sidebar-icons .label {
+        display: none;
+    }
 
     /* 側欄連結按鈕 */
     .sidebar-links {
@@ -857,7 +892,13 @@
                         </a>
                     </span>
                 </div>
-            </div>
+            </div> <ul class="sidebar-icons">
+                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+                <li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+                <li><a href="#" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+            </ul>
 
         </aside>
 
